@@ -1,2 +1,10 @@
 # MyDomain.Api.Template
 Boilerplate template for creating a new API
+
+## Linting
+
+Performed on `pre-commit` using Husky.Net.
+
+The linting of the codebase is done using `dotnet format` which is included within the dotnet SDK, from version `6.0`.
+
+_Note: for new repositories, as dotnet format will only run against changed files, an 'Initial commit' needs to be present to allow Husky to determine which files are staged._
