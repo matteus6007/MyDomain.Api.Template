@@ -1,6 +1,11 @@
+using MyDomain.Application;
+using MyDomain.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure();
 }
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
