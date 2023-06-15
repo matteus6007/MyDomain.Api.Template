@@ -3,7 +3,7 @@ Boilerplate template for creating a new API
 
 ## Linting
 
-Performed on `pre-commit` using Husky.Net.
+Performed on `pre-commit` using [Husky.Net](https://alirezanet.github.io/Husky.Net/).
 
 The linting of the codebase is done using `dotnet format` which is included within the dotnet SDK, from version `6.0`.
 
