@@ -1,3 +1,4 @@
+using MyDomain.Api;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
 using Serilog;
@@ -28,6 +29,6 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseProblem
+app.UseMiddleware<LogUnhandledExceptionsMiddleware>();
 app.MapControllers();
 app.Run();
