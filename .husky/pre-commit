@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-dotnet husky run -v --group "pre-commit"
+#disabled to due https://github.com/dotnet/format/issues/1546
+#dotnet husky run -v --group "pre-commit"
