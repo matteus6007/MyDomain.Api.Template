@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure();
+    builder.Services.AddProblemDetails();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -27,5 +28,6 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseProblem
 app.MapControllers();
 app.Run();
