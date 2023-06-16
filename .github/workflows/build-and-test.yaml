@@ -24,7 +24,7 @@ jobs:
       if: always()
       with:
         name: Unit and Integration Tests
-        path: "**/test-results.trx"
+        path: ".src/tests/**/test-results.trx"
         reporter: dotnet-trx
         fail-on-error: true
 
