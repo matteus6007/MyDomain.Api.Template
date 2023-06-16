@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.Infrastructure", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4AFC61B-8055-42E8-9BDF-4F54C48DABF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.Api.Tests", "tests\MyDomain.Api.Tests\MyDomain.Api.Tests.csproj", "{1E85D1D7-22A9-416C-9D40-9223CA7ACE40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDomain.Api.Tests", "tests\MyDomain.Tests\MyDomain.Tests.csproj", "{1E85D1D7-22A9-416C-9D40-9223CA7ACE40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

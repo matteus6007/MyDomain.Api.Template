@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+
 using MyDomain.Api;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
@@ -13,6 +15,19 @@ var builder = WebApplication.CreateBuilder(args);
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddApiVersioning(opt => 
+    {
+        opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
+        opt.AssumeDefaultVersionWhenUnspecified = true;
+        opt.ReportApiVersions = true;
+    });
+    builder.Services.AddVersionedApiExplorer(options =>
+    {
+        options.SubstituteApiVersionInUrl = true;
+        options.GroupNameFormat = "'v'V";
+        options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+    });       
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
@@ -20,10 +35,19 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 app.UseSerilogRequestLogging();
@@ -32,3 +56,5 @@ app.UseAuthorization();
 app.UseMiddleware<LogUnhandledExceptionsMiddleware>();
 app.MapControllers();
 app.Run();
+
+public partial class Program { }
