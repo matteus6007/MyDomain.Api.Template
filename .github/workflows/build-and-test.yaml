@@ -18,13 +18,13 @@ jobs:
     - name: Build
       run: dotnet build ./src
     - name: Test with the dotnet CLI
-      run: dotnet test ./src --logger:trx;LogFileName=test-results.trx;MethodFormat=Class;FailureBodyFormat=Verbose
+      run: dotnet test ./src --logger:trx;LogFileName=test-results.trx;MethodFormat=Class;FailureBodyFormat=Verbose || true
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: Unit and Integration Tests
-        path: ".src/tests/**/test-results.trx"
+        path: "src/tests/**/test-results.trx"
         reporter: dotnet-trx
         fail-on-error: true
 
