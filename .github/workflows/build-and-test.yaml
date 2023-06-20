@@ -1,6 +1,9 @@
 name: Build and Test
 
-on: [push]
+on: [pull_request]
+
+env:
+  SOURCE_DIRECTORY: "./src"
 
 jobs:
   build:
@@ -14,8 +17,14 @@ jobs:
       with:
         dotnet-version: '7.0.x'
     - name: Install dependencies
-      run: dotnet restore ./src
+      run: dotnet restore $SOURCE_DIRECTORY
     - name: Build
-      run: dotnet build ./src
+      run: dotnet build $SOURCE_DIRECTORY
     - name: Test with the dotnet CLI
-      run: dotnet test ./src
+      run: dotnet test $SOURCE_DIRECTORY/tests/**/*.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: "TestResults/test-results.trx"
