@@ -43,9 +43,30 @@ public class MyDomainsController : ControllerBase
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
     public IActionResult Create(CreateMyDomainRequest request)
     {
-        //TODO: Move to Application
+        // TODO: Move to Application
         var response = new MyDomainDto(Guid.NewGuid(), request.name, request.description, DateTime.UtcNow, null);
 
         return CreatedAtAction(nameof(GetById), new {response.id}, response);
+    }
+
+    /// <summary>
+    /// Update existing MyDomain
+    /// </summary>
+    /// <param name="id">MyDomain ID</param>
+    /// <param name="request">Update MyDomain request</param>
+    /// <returns><see cref="MyDomainDto" /></returns>
+    /// <response code="200">MyDomain returned</response>
+    /// <response code="404">MyDomain not found</response>    
+    [HttpPut]
+    [Route("{id:guid}")]
+    [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
+    public IActionResult Update(Guid id, UpdateMyDomainRequest request)
+    {
+        // TODO: Check if MyDomain exists
+
+        // TODO: Move to Application
+        var response = new MyDomainDto(id, request.name, request.description, DateTime.UtcNow, DateTime.UtcNow);
+
+        return Ok(response);
     }
 }

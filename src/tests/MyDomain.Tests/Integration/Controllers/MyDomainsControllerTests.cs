@@ -63,6 +63,37 @@ public class MyDomainsControllerTests
         Then_Response_ShouldBeBadRequest(response);
     }
 
+    [Theory]
+    [AutoData]
+    public async Task Update_WhenMyDomainIsUpdatedSuccessfully_ThenShouldReturnOk(
+        Guid id,
+        string name)
+    {
+        // Arrange
+        var request = Given_UpdateDomainRequest(id, name);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Then_Response_ShouldBeOk(response);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task Update_WhenRequestIsMissingRequiredFields_ThenShouldReturnBadRequest(
+        Guid id)
+    {
+        // Arrange
+        var request = Given_UpdateDomainRequest(id, string.Empty);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Then_Response_ShouldBeBadRequest(response);
+    }       
+
     private HttpRequestMessage Given_GetMyDomainByIdRequest(Guid id)
     {
         var requestUri = new UriBuilder(_baseUrl);
@@ -82,6 +113,19 @@ public class MyDomainsControllerTests
         return new HttpRequestMessage
         {
             Method = HttpMethod.Post,
+            RequestUri = requestUri.Uri,
+            Content = new StringContent($"{{\"name\":\"{name}\"}}", Encoding.UTF8, "application/json")
+        };
+    }
+
+    private HttpRequestMessage Given_UpdateDomainRequest(Guid id, string name)
+    {
+        var requestUri = new UriBuilder(_baseUrl);
+        requestUri.Path += id.ToString();
+
+        return new HttpRequestMessage
+        {
+            Method = HttpMethod.Put,
             RequestUri = requestUri.Uri,
             Content = new StringContent($"{{\"name\":\"{name}\"}}", Encoding.UTF8, "application/json")
         };
