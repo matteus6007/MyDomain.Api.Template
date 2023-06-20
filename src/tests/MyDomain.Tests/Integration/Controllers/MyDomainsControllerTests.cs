@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 
 using AutoFixture.Xunit2;
 
@@ -34,6 +35,34 @@ public class MyDomainsControllerTests
         Then_Response_ShouldBeOk(response);
     }
 
+    [Theory]
+    [AutoData]
+    public async Task Create_WhenMyDomainIsCreatedSuccessfully_ThenShouldReturnCreated(
+        string name)
+    {
+        // Arrange
+        var request = Given_CreateDomainRequest(name);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Then_Response_ShouldBeCreated(response);
+    }
+
+    [Fact]
+    public async Task Create_WhenRequestIsMissingRequiredFields_ThenShouldReturnBadRequest()
+    {
+        // Arrange
+        var request = Given_CreateDomainRequest(string.Empty);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Then_Response_ShouldBeBadRequest(response);
+    }
+
     private HttpRequestMessage Given_GetMyDomainByIdRequest(Guid id)
     {
         var requestUri = new UriBuilder(_baseUrl);
@@ -46,9 +75,33 @@ public class MyDomainsControllerTests
         };
     }
 
+    private HttpRequestMessage Given_CreateDomainRequest(string name)
+    {
+        var requestUri = new UriBuilder(_baseUrl);
+
+        return new HttpRequestMessage
+        {
+            Method = HttpMethod.Post,
+            RequestUri = requestUri.Uri,
+            Content = new StringContent($"{{\"name\":\"{name}\"}}", Encoding.UTF8, "application/json")
+        };
+    }    
+
     private static void Then_Response_ShouldBeOk(HttpResponseMessage response)
     {
         response.ShouldNotBeNull();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-    } 
+    }
+
+    private static void Then_Response_ShouldBeCreated(HttpResponseMessage response)
+    {
+        response.ShouldNotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
+
+    private static void Then_Response_ShouldBeBadRequest(HttpResponseMessage response)
+    {
+        response.ShouldNotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }    
 }
