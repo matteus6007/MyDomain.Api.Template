@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyDomain.Contracts.Models.V1;
 using MyDomain.Contracts.Requests.V1;
 
-namespace MyDomain.Api.Controllers.V1;
+namespace MyDomain.Api.Controllers;
 
 /// <summary>
 /// Manage MyDomain

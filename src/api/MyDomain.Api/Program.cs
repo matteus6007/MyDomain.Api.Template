@@ -3,6 +3,8 @@ using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
+using MyDomain.Api.Middleware;
+using MyDomain.Api.Options;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
 
@@ -33,6 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
         options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
         options.AssumeDefaultVersionWhenUnspecified = true;
     });
+    builder.Services.ConfigureOptions<AssemblyOptionsProvider>();
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
@@ -58,6 +61,7 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseMiddleware<BuildVersionResponseMiddleware>();
 app.UseExceptionHandler("/error");
 app.MapControllers();
 app.Run();
