@@ -13,6 +13,7 @@ jobs:
     steps:
     - name: Publish Unit Test Results
       uses: dorny/test-reporter@v1
+      if: false
       with:
         name: Unit and Integration Tests
         artifact: test-results
