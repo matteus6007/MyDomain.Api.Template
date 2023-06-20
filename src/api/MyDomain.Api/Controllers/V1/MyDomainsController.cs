@@ -2,6 +2,7 @@ using System.Net;
 
 using Microsoft.AspNetCore.Mvc;
 using MyDomain.Contracts.Models.V1;
+using MyDomain.Contracts.Requests.V1;
 
 namespace MyDomain.Api.Controllers.V1;
 
@@ -26,8 +27,25 @@ public class MyDomainsController : ControllerBase
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
     public IActionResult GetById(Guid id)
     {
+        //TODO: Move to Application
         var response = new MyDomainDto(id, "Test name", "Test description", DateTime.UtcNow, null);
 
         return Ok(response);
+    }
+
+    /// <summary>
+    /// Create new MyDomain
+    /// </summary>
+    /// <param name="request">Create new MyDomain request</param>
+    /// <returns><see cref="MyDomainDto" /></returns>
+    /// <response code="201">MyDomain created</response>
+    [HttpPost]
+    [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
+    public IActionResult Create(CreateMyDomainRequest request)
+    {
+        //TODO: Move to Application
+        var response = new MyDomainDto(Guid.NewGuid(), request.name, request.description, DateTime.UtcNow, null);
+
+        return CreatedAtAction(nameof(GetById), new {response.id}, response);
     }
 }

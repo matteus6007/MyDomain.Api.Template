@@ -1,13 +1,18 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-using MyDomain.Api;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+    builder.Services.AddFluentValidationAutoValidation();
+    builder.Services.AddValidatorsFromAssemblyContaining<Program>();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure();
     builder.Services.AddProblemDetails();
@@ -27,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
         options.GroupNameFormat = "'v'V";
         options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
         options.AssumeDefaultVersionWhenUnspecified = true;
-    });       
+    });
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
@@ -53,7 +58,7 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseMiddleware<LogUnhandledExceptionsMiddleware>();
+app.UseExceptionHandler("/error");
 app.MapControllers();
 app.Run();
 
