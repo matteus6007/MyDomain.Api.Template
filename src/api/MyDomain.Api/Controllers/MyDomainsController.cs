@@ -1,6 +1,13 @@
 using System.Net;
 
+using ErrorOr;
+
+using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
+
+using MyDomain.Application.Services.Commands.Common;
+using MyDomain.Application.Services.Commands.CreateMyDomain;
 using MyDomain.Contracts.Models.V1;
 using MyDomain.Contracts.Requests.V1;
 
@@ -15,6 +22,13 @@ namespace MyDomain.Api.Controllers;
 [Produces("application/json")]
 public class MyDomainsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public MyDomainsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     /// <summary>
     /// Get MyDomain by ID
     /// </summary>
@@ -28,7 +42,7 @@ public class MyDomainsController : ControllerBase
     public IActionResult GetById(Guid id)
     {
         //TODO: Move to Application
-        var response = new MyDomainDto(id, "Test name", "Test description", DateTime.UtcNow, null);
+        var response = new MyDomainDto(id, "Test name", "Test description", DateTime.UtcNow, DateTime.UtcNow);
 
         return Ok(response);
     }
@@ -41,12 +55,16 @@ public class MyDomainsController : ControllerBase
     /// <response code="201">MyDomain created</response>
     [HttpPost]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
-    public IActionResult Create(CreateMyDomainRequest request)
+    public async Task<IActionResult>  Create(CreateMyDomainRequest request)
     {
-        // TODO: Move to Application
-        var response = new MyDomainDto(Guid.NewGuid(), request.name, request.description, DateTime.UtcNow, null);
+        var command = new CreateMyDomainCommand(request.Name, request.Description ?? string.Empty);
 
-        return CreatedAtAction(nameof(GetById), new {response.id}, response);
+        ErrorOr<MyDomainResult> response = await _mediator.Send(command);
+
+        // TODO: add contract mapper
+        return response.Match(
+            dto => CreatedAtAction(nameof(GetById), new { dto.Id }, dto),
+            error => StatusCode((int)HttpStatusCode.InternalServerError, new { error = "Something went wrong" }));
     }
 
     /// <summary>
@@ -65,7 +83,7 @@ public class MyDomainsController : ControllerBase
         // TODO: Check if MyDomain exists
 
         // TODO: Move to Application
-        var response = new MyDomainDto(id, request.name, request.description, DateTime.UtcNow, DateTime.UtcNow);
+        var response = new MyDomainDto(id, request.Name, request.Description, DateTime.UtcNow, DateTime.UtcNow);
 
         return Ok(response);
     }
