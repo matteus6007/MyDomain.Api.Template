@@ -2,7 +2,7 @@ using ErrorOr;
 
 using MediatR;
 
-using MyDomain.Application.Services.Commands.Common;
+using MyDomain.Application.Services.Common;
 
 namespace MyDomain.Application.Services.Commands.CreateMyDomain;
 

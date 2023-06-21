@@ -9,7 +9,7 @@ namespace MyDomain.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddScoped<IMyAggregateRepository, InMemoryMyAggregateRepository>();
+            services.AddSingleton<IMyAggregateRepository, InMemoryMyAggregateRepository>();
 
             return services;
         }

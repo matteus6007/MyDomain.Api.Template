@@ -1,7 +1,9 @@
 using ErrorOr;
+
 using MediatR;
+
 using MyDomain.Application.Common.Interfaces.Persistence;
-using MyDomain.Application.Services.Commands.Common;
+using MyDomain.Application.Services.Common;
 using MyDomain.Domain.MyAggregate;
 
 namespace MyDomain.Application.Services.Commands.CreateMyDomain;
@@ -19,7 +21,7 @@ public class CreateMyDomainCommandHandler : IRequestHandler<CreateMyDomainComman
     {
         var aggregate = MyAggregate.Create(request.Name, request.Description);
 
-        await _repository.UpdateAsync(aggregate);
+        await _repository.AddAsync(aggregate);
 
         var result = new MyDomainResult(
             aggregate.Id.Value,

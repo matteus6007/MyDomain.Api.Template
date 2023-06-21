@@ -1,4 +1,4 @@
-namespace MyDomain.Application.Services.Commands.Common;
+namespace MyDomain.Application.Services.Common;
 
 public record MyDomainResult(
     Guid Id,

@@ -6,8 +6,9 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 
-using MyDomain.Application.Services.Commands.Common;
 using MyDomain.Application.Services.Commands.CreateMyDomain;
+using MyDomain.Application.Services.Common;
+using MyDomain.Application.Services.Queries;
 using MyDomain.Contracts.Models.V1;
 using MyDomain.Contracts.Requests.V1;
 
@@ -16,15 +17,12 @@ namespace MyDomain.Api.Controllers;
 /// <summary>
 /// Manage MyDomain
 /// </summary>
-[ApiController]
-[Route("v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-[Produces("application/json")]
-public class MyDomainsController : ControllerBase
+public class MyDomainsController : ApiController
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _mediator;
 
-    public MyDomainsController(IMediator mediator)
+    public MyDomainsController(ISender mediator)
     {
         _mediator = mediator;
     }
@@ -39,12 +37,16 @@ public class MyDomainsController : ControllerBase
     [HttpGet]
     [Route("{id:guid}")]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
-    public IActionResult GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        //TODO: Move to Application
-        var response = new MyDomainDto(id, "Test name", "Test description", DateTime.UtcNow, DateTime.UtcNow);
+        var query = new GetMyDomainByIdQuery(id);
 
-        return Ok(response);
+        ErrorOr<MyDomainResult> response = await _mediator.Send(query);
+
+        // TODO: add contract mapper
+        return response.Match(
+            result => Ok(result),
+            errors => Problem(errors));
     }
 
     /// <summary>
@@ -63,8 +65,8 @@ public class MyDomainsController : ControllerBase
 
         // TODO: add contract mapper
         return response.Match(
-            dto => CreatedAtAction(nameof(GetById), new { dto.Id }, dto),
-            error => StatusCode((int)HttpStatusCode.InternalServerError, new { error = "Something went wrong" }));
+            result => CreatedAtAction(nameof(GetById), new { result.Id }, result),
+            errors => Problem(errors));
     }
 
     /// <summary>

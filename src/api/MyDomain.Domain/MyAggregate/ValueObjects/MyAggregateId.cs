@@ -6,7 +6,7 @@ public sealed class MyAggregateId : ValueObject
 {
     public Guid Value { get; }
 
-    private MyAggregateId(Guid value)
+    public MyAggregateId(Guid value)
     {
         Value = value;
     }
