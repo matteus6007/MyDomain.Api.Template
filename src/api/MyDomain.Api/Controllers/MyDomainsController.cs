@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 using MyDomain.Application.Services.Commands.CreateMyDomain;
+using MyDomain.Application.Services.Commands.UpdateMyDomain;
 using MyDomain.Application.Services.Common;
 using MyDomain.Application.Services.Queries;
 using MyDomain.Contracts.Models.V1;
@@ -76,17 +77,18 @@ public class MyDomainsController : ApiController
     /// <param name="request">Update MyDomain request</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="200">MyDomain returned</response>
-    /// <response code="404">MyDomain not found</response>    
+    /// <response code="404">MyDomain not found</response>
     [HttpPut]
     [Route("{id:guid}")]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
-    public IActionResult Update(Guid id, UpdateMyDomainRequest request)
+    public async Task<IActionResult> Update(Guid id, UpdateMyDomainRequest request)
     {
-        // TODO: Check if MyDomain exists
+        var command = new UpdateMyDomainCommand(id, request.Name, request.Description);
 
-        // TODO: Move to Application
-        var response = new MyDomainDto(id, request.Name, request.Description, DateTime.UtcNow, DateTime.UtcNow);
+        ErrorOr<MyDomainResult> response = await _mediator.Send(command);
 
-        return Ok(response);
+        return response.Match(
+            result => Ok(result),
+            errors => Problem(errors));
     }
 }

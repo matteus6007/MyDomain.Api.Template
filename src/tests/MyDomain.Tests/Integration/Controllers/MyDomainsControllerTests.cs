@@ -40,7 +40,7 @@ public class MyDomainsControllerTests
 
         // Assert
         Then_Response_ShouldBeOk(response);
-        Then_Content_ShouldBeCorrect(content, result.Id, result.Name);
+        Then_Content_ShouldBeCorrect(content, result.Id, result.Name, result.Description);
     }
 
     [Theory]
@@ -91,11 +91,12 @@ public class MyDomainsControllerTests
     [Theory]
     [AutoData]
     public async Task Update_WhenMyDomainIsUpdatedSuccessfully_ThenShouldReturnOk(
-        string name)
+        string name,
+        string description)
     {
         // Arrange
         var result = await Given_MyDomainExists(name);
-        var request = Given_UpdateDomainRequest(result.Id, name);
+        var request = Given_UpdateDomainRequest(result.Id, name, description);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -103,7 +104,7 @@ public class MyDomainsControllerTests
 
         // Assert
         Then_Response_ShouldBeOk(response);
-        Then_Content_ShouldBeCorrect(content, result.Id, name);
+        Then_Content_ShouldBeCorrect(content, result.Id, name, description);
     }
 
     [Theory]
@@ -112,7 +113,7 @@ public class MyDomainsControllerTests
         Guid id)
     {
         // Arrange
-        var request = Given_UpdateDomainRequest(id, string.Empty);
+        var request = Given_UpdateDomainRequest(id, string.Empty, string.Empty);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -145,7 +146,7 @@ public class MyDomainsControllerTests
         };
     }
 
-    private HttpRequestMessage Given_UpdateDomainRequest(Guid id, string name)
+    private HttpRequestMessage Given_UpdateDomainRequest(Guid id, string name, string description)
     {
         var requestUri = new UriBuilder(_baseUrl);
         requestUri.Path += id.ToString();
@@ -154,7 +155,7 @@ public class MyDomainsControllerTests
         {
             Method = HttpMethod.Put,
             RequestUri = requestUri.Uri,
-            Content = new StringContent($"{{\"name\":\"{name}\"}}", Encoding.UTF8, "application/json")
+            Content = new StringContent($"{{\"name\":\"{name}\", \"description\":\"{description}\"}}", Encoding.UTF8, "application/json")
         };
     }
 
@@ -201,11 +202,12 @@ public class MyDomainsControllerTests
         actualResult.Name.ShouldBe(name);
     }    
 
-    private static void Then_Content_ShouldBeCorrect(string content, Guid id, string name)
+    private static void Then_Content_ShouldBeCorrect(string content, Guid id, string name, string description)
     {
         var actualResult = JsonConvert.DeserializeObject<MyDomainResult>(content);
         actualResult.ShouldNotBeNull();
         actualResult.Id.ShouldBe(id);
         actualResult.Name.ShouldBe(name);
+        actualResult.Description.ShouldBe(description);
     }
 }
