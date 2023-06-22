@@ -1,6 +1,6 @@
-namespace MyDomain.Contracts.Models.V1;
+namespace MyDomain.Application.Common.Models;
 
-public record MyDomainDto(
+public record MyDomainResult(
     Guid Id,
     string Name,
     string Description,

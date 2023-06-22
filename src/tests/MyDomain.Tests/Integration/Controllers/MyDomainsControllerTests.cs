@@ -3,6 +3,10 @@ using System.Text;
 
 using AutoFixture.Xunit2;
 
+using MyDomain.Contracts.Models.V1;
+
+using Newtonsoft.Json;
+
 using Shouldly;
 
 namespace MyDomain.Tests.Integration.Controllers;
@@ -23,7 +27,26 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task GetById_WhenMyDomainExists_ThenShouldReturnMyDomain(Guid id)
+    public async Task GetById_WhenMyDomainExists_ThenShouldReturnMyDomain(
+        string name)
+    {
+        // Arrange
+        var result = await Given_MyDomainExists(name);
+        var request = Given_GetMyDomainByIdRequest(result.Id);
+        
+        // Act
+        var response = await _client.SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        Then_Response_ShouldBeOk(response);
+        Then_Content_ShouldBeCorrect(content, result.Id, result.Name, result.Description);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task GetById_WhenMyDomainDoesNotExist_ThenShouldReturnNotFound(
+        Guid id)
     {
         // Arrange
         var request = Given_GetMyDomainByIdRequest(id);
@@ -32,7 +55,7 @@ public class MyDomainsControllerTests
         var response = await _client.SendAsync(request);
 
         // Assert
-        Then_Response_ShouldBeOk(response);
+        Then_Response_ShouldBeNotFound(response);
     }
 
     [Theory]
@@ -45,9 +68,11 @@ public class MyDomainsControllerTests
 
         // Act
         var response = await _client.SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         // Assert
         Then_Response_ShouldBeCreated(response);
+        Then_Content_ShouldBeCorrect(content, name);
     }
 
     [Fact]
@@ -66,17 +91,20 @@ public class MyDomainsControllerTests
     [Theory]
     [AutoData]
     public async Task Update_WhenMyDomainIsUpdatedSuccessfully_ThenShouldReturnOk(
-        Guid id,
-        string name)
+        string name,
+        string description)
     {
         // Arrange
-        var request = Given_UpdateDomainRequest(id, name);
+        var result = await Given_MyDomainExists(name);
+        var request = Given_UpdateDomainRequest(result.Id, name, description);
 
         // Act
         var response = await _client.SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         // Assert
         Then_Response_ShouldBeOk(response);
+        Then_Content_ShouldBeCorrect(content, result.Id, name, description);
     }
 
     [Theory]
@@ -85,7 +113,7 @@ public class MyDomainsControllerTests
         Guid id)
     {
         // Arrange
-        var request = Given_UpdateDomainRequest(id, string.Empty);
+        var request = Given_UpdateDomainRequest(id, string.Empty, string.Empty);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -118,7 +146,7 @@ public class MyDomainsControllerTests
         };
     }
 
-    private HttpRequestMessage Given_UpdateDomainRequest(Guid id, string name)
+    private HttpRequestMessage Given_UpdateDomainRequest(Guid id, string name, string description)
     {
         var requestUri = new UriBuilder(_baseUrl);
         requestUri.Path += id.ToString();
@@ -127,15 +155,32 @@ public class MyDomainsControllerTests
         {
             Method = HttpMethod.Put,
             RequestUri = requestUri.Uri,
-            Content = new StringContent($"{{\"name\":\"{name}\"}}", Encoding.UTF8, "application/json")
+            Content = new StringContent($"{{\"name\":\"{name}\", \"description\":\"{description}\"}}", Encoding.UTF8, "application/json")
         };
-    }    
+    }
+
+    private async Task<MyDomainDto> Given_MyDomainExists(string name)
+    {
+        var createRequest = Given_CreateDomainRequest(name);
+        var createResponse = await _client.SendAsync(createRequest);
+
+        var content = await createResponse.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<MyDomainDto>(content);
+        
+        return result;
+    }     
 
     private static void Then_Response_ShouldBeOk(HttpResponseMessage response)
     {
         response.ShouldNotBeNull();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
+
+    private static void Then_Response_ShouldBeNotFound(HttpResponseMessage response)
+    {
+        response.ShouldNotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }    
 
     private static void Then_Response_ShouldBeCreated(HttpResponseMessage response)
     {
@@ -147,5 +192,22 @@ public class MyDomainsControllerTests
     {
         response.ShouldNotBeNull();
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    private static void Then_Content_ShouldBeCorrect(string content, string name)
+    {
+        var actualResult = JsonConvert.DeserializeObject<MyDomainDto>(content);
+        actualResult.ShouldNotBeNull();
+        actualResult.Id.ShouldNotBe(Guid.Empty);
+        actualResult.Name.ShouldBe(name);
     }    
+
+    private static void Then_Content_ShouldBeCorrect(string content, Guid id, string name, string description)
+    {
+        var actualResult = JsonConvert.DeserializeObject<MyDomainDto>(content);
+        actualResult.ShouldNotBeNull();
+        actualResult.Id.ShouldBe(id);
+        actualResult.Name.ShouldBe(name);
+        actualResult.Description.ShouldBe(description);
+    }
 }

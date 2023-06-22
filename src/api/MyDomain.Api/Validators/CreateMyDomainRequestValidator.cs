@@ -8,6 +8,6 @@ public class CreateMyDomainRequestValidator : AbstractValidator<CreateMyDomainRe
 {
     public CreateMyDomainRequestValidator()
     {
-        RuleFor(x => x.name).NotNull().NotEmpty().WithMessage("Name is required");
+        RuleFor(x => x.Name).NotNull().NotEmpty().WithMessage("Name is required");
     }
 }

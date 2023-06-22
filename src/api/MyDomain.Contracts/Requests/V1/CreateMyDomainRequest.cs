@@ -1,3 +1,5 @@
 namespace MyDomain.Contracts.Requests.V1;
 
-public record CreateMyDomainRequest(string name, string? description);
+public record CreateMyDomainRequest(
+    string Name,
+    string? Description);
