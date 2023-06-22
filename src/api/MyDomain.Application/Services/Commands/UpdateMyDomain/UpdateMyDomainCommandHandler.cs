@@ -41,8 +41,8 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
             aggregate.Id.Value,
             aggregate.Name,
             aggregate.Description,
-            aggregate.Created,
-            aggregate.Updated);
+            aggregate.CreatedOn,
+            aggregate.UpdatedOn);
 
         return result;        
     }

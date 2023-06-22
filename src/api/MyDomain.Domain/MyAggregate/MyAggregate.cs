@@ -9,22 +9,22 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
 
     public string Description { get; private set; }
 
-    public DateTime Created { get; private set; }
+    public DateTime CreatedOn { get; private set; }
 
-    public DateTime Updated { get; private set; }
+    public DateTime UpdatedOn { get; private set; }
 
     private MyAggregate(
         MyAggregateId id,
         string name,
         string description,
-        DateTime created,
-        DateTime updated)
+        DateTime createdOn,
+        DateTime updatedOn)
          : base(id)
     {
         Name = name;
         Description = description;
-        Created = created;
-        Updated = updated;
+        CreatedOn = createdOn;
+        UpdatedOn = updatedOn;
     }
 
     public static MyAggregate Create(
@@ -47,6 +47,6 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
     {
         Name = name;
         Description = description;
-        Updated = updatedOn;
+        UpdatedOn = updatedOn;
     }
 }

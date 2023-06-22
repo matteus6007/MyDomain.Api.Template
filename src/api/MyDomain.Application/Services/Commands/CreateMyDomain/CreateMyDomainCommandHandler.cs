@@ -32,8 +32,8 @@ public class CreateMyDomainCommandHandler : IRequestHandler<CreateMyDomainComman
             aggregate.Id.Value,
             aggregate.Name,
             aggregate.Description,
-            aggregate.Created,
-            aggregate.Updated);
+            aggregate.CreatedOn,
+            aggregate.UpdatedOn);
 
         return result;
     }
