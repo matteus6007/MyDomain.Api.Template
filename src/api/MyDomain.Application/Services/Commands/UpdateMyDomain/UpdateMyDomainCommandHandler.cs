@@ -2,6 +2,7 @@ using ErrorOr;
 
 using MediatR;
 
+using MyDomain.Application.Common.Interfaces;
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Application.Common.Models;
 using MyDomain.Domain.MyAggregate.ValueObjects;
@@ -11,10 +12,14 @@ namespace MyDomain.Application.Services.Commands.UpdateMyDomain;
 public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainCommand, ErrorOr<MyDomainResult>>
 {
     private readonly IMyAggregateRepository _repository;
+    private readonly IDateTimeProvider _dateTime;
 
-    public UpdateMyDomainCommandHandler(IMyAggregateRepository repository)
+    public UpdateMyDomainCommandHandler(
+        IMyAggregateRepository repository,
+        IDateTimeProvider dateTime)
     {
         _repository = repository;
+        _dateTime = dateTime;
     }
 
     public async Task<ErrorOr<MyDomainResult>> Handle(UpdateMyDomainCommand request, CancellationToken cancellationToken)
@@ -28,7 +33,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
             return Error.NotFound();
         }
 
-        aggregate.Update(request.Name, request.Description);
+        aggregate.Update(request.Name, request.Description, _dateTime.UtcNow);
 
         await _repository.UpdateAsync(aggregate);
 

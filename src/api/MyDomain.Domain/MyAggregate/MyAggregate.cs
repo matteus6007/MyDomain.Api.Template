@@ -29,22 +29,24 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
 
     public static MyAggregate Create(
         string name,
-        string description)
+        string description,
+        DateTime createdOn)
     {
         return new(
             MyAggregateId.CreateUnique(),
             name,
             description,
-            DateTime.UtcNow,
-            DateTime.UtcNow); // TODO: create DateTime wrapper
+            createdOn,
+            createdOn);
     }
 
     public void Update(
         string name,
-        string description)
+        string description,
+        DateTime updatedOn)
     {
         Name = name;
         Description = description;
-        Updated = DateTime.UtcNow;
+        Updated = updatedOn;
     }
 }

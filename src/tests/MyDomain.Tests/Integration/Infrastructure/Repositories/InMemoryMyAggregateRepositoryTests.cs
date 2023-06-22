@@ -57,7 +57,7 @@ public class InMemoryMyAggregateRepositoryTests
         await GivenRecordExists(existingAggregate);
 
         // Act
-        existingAggregate.Update(updatedName, updatedDescription);
+        existingAggregate.Update(updatedName, updatedDescription, DateTime.UtcNow);
 
         // Assert
         var result = await _sut.GetByIdAsync(existingAggregate.Id);
@@ -69,7 +69,7 @@ public class InMemoryMyAggregateRepositoryTests
 
     private async Task<MyAggregate> GivenRecordExists(string name, string description)
     {
-        var aggregate = MyAggregate.Create(name, description);
+        var aggregate = MyAggregate.Create(name, description, DateTime.UtcNow);
 
         await GivenRecordExists(aggregate);
 
