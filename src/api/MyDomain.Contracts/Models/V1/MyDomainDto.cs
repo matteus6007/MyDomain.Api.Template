@@ -4,5 +4,5 @@ public record MyDomainDto(
     Guid Id,
     string Name,
     string Description,
-    DateTime Created,
-    DateTime Updated);
+    DateTime CreatedOn,
+    DateTime UpdatedOn);
