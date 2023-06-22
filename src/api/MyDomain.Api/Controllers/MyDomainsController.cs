@@ -1,6 +1,8 @@
 using System.Net;
 
-using ErrorOr;
+using Mapster;
+
+using MapsterMapper;
 
 using MediatR;
 
@@ -8,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using MyDomain.Application.Services.Commands.CreateMyDomain;
 using MyDomain.Application.Services.Commands.UpdateMyDomain;
-using MyDomain.Application.Services.Common;
 using MyDomain.Application.Services.Queries;
 using MyDomain.Contracts.Models.V1;
 using MyDomain.Contracts.Requests.V1;
@@ -22,10 +23,12 @@ namespace MyDomain.Api.Controllers;
 public class MyDomainsController : ApiController
 {
     private readonly ISender _mediator;
+    private readonly IMapper _mapper;
 
-    public MyDomainsController(ISender mediator)
+    public MyDomainsController(ISender mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -42,12 +45,11 @@ public class MyDomainsController : ApiController
     {
         var query = new GetMyDomainByIdQuery(id);
 
-        ErrorOr<MyDomainResult> response = await _mediator.Send(query);
+        var response = await _mediator.Send(query);
 
-        // TODO: add contract mapper
         return response.Match(
-            result => Ok(result),
-            errors => Problem(errors));
+            result => Ok(_mapper.Map<MyDomainDto>(result)),
+            Problem);
     }
 
     /// <summary>
@@ -58,16 +60,15 @@ public class MyDomainsController : ApiController
     /// <response code="201">MyDomain created</response>
     [HttpPost]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
-    public async Task<IActionResult>  Create(CreateMyDomainRequest request)
+    public async Task<IActionResult> Create(CreateMyDomainRequest request)
     {
-        var command = new CreateMyDomainCommand(request.Name, request.Description ?? string.Empty);
+        var command = _mapper.Map<CreateMyDomainCommand>(request);
 
-        ErrorOr<MyDomainResult> response = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
-        // TODO: add contract mapper
         return response.Match(
-            result => CreatedAtAction(nameof(GetById), new { result.Id }, result),
-            errors => Problem(errors));
+            result => CreatedAtAction(nameof(GetById), new { result.Id }, _mapper.Map<MyDomainDto>(result)),
+            Problem);
     }
 
     /// <summary>
@@ -83,12 +84,12 @@ public class MyDomainsController : ApiController
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> Update(Guid id, UpdateMyDomainRequest request)
     {
-        var command = new UpdateMyDomainCommand(id, request.Name, request.Description);
+        var command = (request, id).Adapt<UpdateMyDomainCommand>();
 
-        ErrorOr<MyDomainResult> response = await _mediator.Send(command);
+        var response = await _mediator.Send(command);
 
         return response.Match(
-            result => Ok(result),
-            errors => Problem(errors));
+            result => Ok(_mapper.Map<MyDomainDto>(result)),
+            Problem);
     }
 }

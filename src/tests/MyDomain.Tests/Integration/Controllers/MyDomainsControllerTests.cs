@@ -3,7 +3,7 @@ using System.Text;
 
 using AutoFixture.Xunit2;
 
-using MyDomain.Application.Services.Common;
+using MyDomain.Contracts.Models.V1;
 
 using Newtonsoft.Json;
 
@@ -159,13 +159,13 @@ public class MyDomainsControllerTests
         };
     }
 
-    private async Task<MyDomainResult> Given_MyDomainExists(string name)
+    private async Task<MyDomainDto> Given_MyDomainExists(string name)
     {
         var createRequest = Given_CreateDomainRequest(name);
         var createResponse = await _client.SendAsync(createRequest);
 
         var content = await createResponse.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<MyDomainResult>(content);
+        var result = JsonConvert.DeserializeObject<MyDomainDto>(content);
         
         return result;
     }     
@@ -196,7 +196,7 @@ public class MyDomainsControllerTests
 
     private static void Then_Content_ShouldBeCorrect(string content, string name)
     {
-        var actualResult = JsonConvert.DeserializeObject<MyDomainResult>(content);
+        var actualResult = JsonConvert.DeserializeObject<MyDomainDto>(content);
         actualResult.ShouldNotBeNull();
         actualResult.Id.ShouldNotBe(Guid.Empty);
         actualResult.Name.ShouldBe(name);
@@ -204,7 +204,7 @@ public class MyDomainsControllerTests
 
     private static void Then_Content_ShouldBeCorrect(string content, Guid id, string name, string description)
     {
-        var actualResult = JsonConvert.DeserializeObject<MyDomainResult>(content);
+        var actualResult = JsonConvert.DeserializeObject<MyDomainDto>(content);
         actualResult.ShouldNotBeNull();
         actualResult.Id.ShouldBe(id);
         actualResult.Name.ShouldBe(name);

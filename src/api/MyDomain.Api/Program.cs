@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
+using MyDomain.Api;
 using MyDomain.Api.Middleware;
 using MyDomain.Api.Options;
 using MyDomain.Application;
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+    builder.Services.AddPresentation();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure();
     builder.Services.AddProblemDetails();
