@@ -2,7 +2,7 @@ using ErrorOr;
 
 using MediatR;
 
-using MyDomain.Application.Services.Common;
+using MyDomain.Application.Common.Models;
 
 namespace MyDomain.Application.Services.Commands.UpdateMyDomain;
 

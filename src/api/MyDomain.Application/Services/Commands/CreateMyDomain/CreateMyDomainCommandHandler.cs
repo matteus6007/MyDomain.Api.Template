@@ -3,7 +3,7 @@ using ErrorOr;
 using MediatR;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
-using MyDomain.Application.Services.Common;
+using MyDomain.Application.Common.Models;
 using MyDomain.Domain.MyAggregate;
 
 namespace MyDomain.Application.Services.Commands.CreateMyDomain;

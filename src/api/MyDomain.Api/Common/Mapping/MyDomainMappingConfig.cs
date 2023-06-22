@@ -2,7 +2,7 @@ using Mapster;
 
 using MyDomain.Application.Services.Commands.CreateMyDomain;
 using MyDomain.Application.Services.Commands.UpdateMyDomain;
-using MyDomain.Application.Services.Common;
+using MyDomain.Application.Common.Models;
 using MyDomain.Contracts.Models.V1;
 using MyDomain.Contracts.Requests.V1;
 

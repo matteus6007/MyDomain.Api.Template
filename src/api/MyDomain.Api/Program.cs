@@ -1,11 +1,7 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
-
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 using MyDomain.Api;
 using MyDomain.Api.Middleware;
-using MyDomain.Api.Options;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
 
@@ -13,31 +9,9 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
-    builder.Services.AddFluentValidationAutoValidation();
-    builder.Services.AddValidatorsFromAssemblyContaining<Program>();
     builder.Services.AddPresentation();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure();
-    builder.Services.AddProblemDetails();
-
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-    builder.Services.AddApiVersioning(opt => 
-    {
-        opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
-        opt.AssumeDefaultVersionWhenUnspecified = true;
-        opt.ReportApiVersions = true;
-    });
-    builder.Services.AddVersionedApiExplorer(options =>
-    {
-        options.SubstituteApiVersionInUrl = true;
-        options.GroupNameFormat = "'v'V";
-        options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
-        options.AssumeDefaultVersionWhenUnspecified = true;
-    });
-    builder.Services.ConfigureOptions<AssemblyOptionsProvider>();
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
