@@ -74,6 +74,34 @@ public class MyAggregateRepositoryTests
         result.UpdatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
     }
 
+    [Theory]
+    [AutoData]
+    public async Task UpdateAsync_WhenRecordExists_ThenRecordShouldBeSavedSuccessfully(
+        MyAggregate aggregate,
+        string updatedName,
+        string updatedDescription) 
+    {
+        // Arrange
+        var expectedVersion = aggregate.Version + 1;
+
+        await GivenRecordExists(aggregate);
+
+        aggregate.Update(updatedName, updatedDescription, UpdatedOn);
+
+        // Act
+        await _sut.UpdateAsync(aggregate);
+
+        // Assert
+        var result = await ThenRecordExists(aggregate.Id);
+
+        result.ShouldNotBeNull();
+        result.Version.ShouldBe(expectedVersion);
+        result.Name.ShouldBe(updatedName);
+        result.Description.ShouldBe(updatedDescription);
+        result.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
+        result.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
+    }
+
     private async Task GivenRecordExists(MyAggregate record)
     {
         await _databaseHelper.AddRecordAsync(record);

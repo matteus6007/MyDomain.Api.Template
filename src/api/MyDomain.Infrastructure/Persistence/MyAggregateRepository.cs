@@ -68,8 +68,32 @@ public class MyAggregateRepository : IMyAggregateRepository
         transaction.Commit();
     }
 
-    public Task UpdateAsync(MyAggregate data)
+    public async Task UpdateAsync(MyAggregate data)
     {
-        throw new NotImplementedException();
+        using var connection = new MySqlConnection(_writeConnectionString);
+        await connection.OpenAsync();
+
+        using var transaction = await connection.BeginTransactionAsync();
+        var parameters = new
+        {
+            Id = data.Id.Value.ToString(),
+            data.Version,
+            data.Name,
+            data.Description,
+            data.CreatedOn,
+            data.UpdatedOn
+        };
+
+        // TODO: Add version check
+        const string sql = @"UPDATE MyAggregates SET Version = @Version, Name = @Name, Description = @Description, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn
+                            WHERE Id = @Id;";
+
+        var recordsUpdated = await connection.ExecuteAsync(
+            sql,
+            parameters,
+            transaction,
+            commandType: CommandType.Text);
+
+        transaction.Commit();
     }
 }
