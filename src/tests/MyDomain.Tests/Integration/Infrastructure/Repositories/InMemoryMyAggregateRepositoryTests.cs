@@ -63,8 +63,9 @@ public class InMemoryMyAggregateRepositoryTests
         var result = await _sut.GetByIdAsync(existingAggregate.Id);
 
         result.ShouldNotBeNull();
-        result.Name.ShouldBeSameAs(updatedName);
-        result.Description.ShouldBeSameAs(updatedDescription);
+        result.Version.ShouldBe(2);
+        result.Name.ShouldBe(updatedName);
+        result.Description.ShouldBe(updatedDescription);
     }
 
     private async Task<MyAggregate> GivenRecordExists(string name, string description)

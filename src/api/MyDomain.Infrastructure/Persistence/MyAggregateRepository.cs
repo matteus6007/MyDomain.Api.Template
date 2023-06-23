@@ -40,9 +40,32 @@ public class MyAggregateRepository : IMyAggregateRepository
         return aggregate;
     }    
 
-    public Task AddAsync(MyAggregate data)
+    public async Task AddAsync(MyAggregate data)
     {
-        throw new NotImplementedException();
+        using var connection = new MySqlConnection(_writeConnectionString);
+        await connection.OpenAsync();
+
+        using var transaction = await connection.BeginTransactionAsync();
+        var parameters = new
+        {
+            Id = data.Id.Value.ToString(),
+            data.Version,
+            data.Name,
+            data.Description,
+            data.CreatedOn,
+            data.UpdatedOn
+        };
+
+        const string sql = @"INSERT INTO MyAggregates (Id,Version,Name,Description,CreatedOn,UpdatedOn)
+                            VALUES (@Id,@Version,@Name,@Description,@CreatedOn,@UpdatedOn);";
+
+        await connection.ExecuteAsync(
+            sql,
+            parameters,
+            transaction,
+            commandType: CommandType.Text);
+
+        transaction.Commit();
     }
 
     public Task UpdateAsync(MyAggregate data)
