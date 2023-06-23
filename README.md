@@ -32,3 +32,16 @@ Example configuration in `appsettings.json`:
     "Enrich": ["FromLogContext"]
 }
 ```
+
+## Launch Environment
+
+* MySQL
+* Database migrations
+
+Start environment:
+
+`.\environment.ps1 start`
+
+Stop environment:
+
+`.\environment.ps1 stop`
