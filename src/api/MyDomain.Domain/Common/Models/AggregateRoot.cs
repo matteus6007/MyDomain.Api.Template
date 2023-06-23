@@ -3,10 +3,11 @@ namespace MyDomain.Domain.Common.Models;
 public abstract class AggregateRoot<TId> : Entity<TId>
     where TId : notnull
 {
-    public long Version { get; private set; }
+    public int Version { get; protected set; }
 
-    protected AggregateRoot(TId id) : base(id)
+    protected AggregateRoot(TId id, int version)
+     : base(id)
     {
-        Version = 1;
+        Version = version;
     }
 }

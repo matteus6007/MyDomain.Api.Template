@@ -19,7 +19,7 @@ public class GetMyDomainByIdQueryHandler : IRequestHandler<GetMyDomainByIdQuery,
 
     public async Task<ErrorOr<MyDomainResult>> Handle(GetMyDomainByIdQuery request, CancellationToken cancellationToken)
     {
-        var id = new MyAggregateId(request.Id);
+        var id = MyAggregateId.Create(request.Id);
 
         var aggregate = await _repository.GetByIdAsync(id);
 

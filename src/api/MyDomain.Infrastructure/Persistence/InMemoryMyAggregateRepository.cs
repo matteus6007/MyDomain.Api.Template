@@ -8,18 +8,18 @@ public class InMemoryMyAggregateRepository : IMyAggregateRepository
 {
     private readonly List<MyAggregate> _items = new();
 
-    public async Task AddAsync(MyAggregate data)
-    {
-        await Task.CompletedTask;
-
-        _items.Add(data);
-    }
-
     public async Task<MyAggregate?> GetByIdAsync(MyAggregateId id)
     {
         await Task.CompletedTask;
 
         return _items.FirstOrDefault(x => x.Id == id);
+    }    
+
+    public async Task AddAsync(MyAggregate data)
+    {
+        await Task.CompletedTask;
+
+        _items.Add(data);
     }
 
     public async Task UpdateAsync(MyAggregate data)
