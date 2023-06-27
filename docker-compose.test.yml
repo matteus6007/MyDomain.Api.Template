@@ -1,0 +1,17 @@
+version: '3.7'
+
+networks:
+  mydomain-api:
+    external: true
+
+services:
+  test:
+    networks:
+      - mydomain-api
+    image: api.test
+    build:
+      context: .
+      dockerfile: src/api/MyDomain.Api/Dockerfile
+      target: test
+    volumes:
+      - ./testresults:/src/tests/MyDomain.Tests/TestResults
