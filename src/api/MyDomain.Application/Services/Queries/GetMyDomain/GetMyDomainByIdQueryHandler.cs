@@ -4,36 +4,34 @@ using MediatR;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Application.Common.Models;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.Models;
 
 namespace MyDomain.Application.Services.Queries;
 
 public class GetMyDomainByIdQueryHandler : IRequestHandler<GetMyDomainByIdQuery, ErrorOr<MyDomainResult>>
 {
-    private readonly IMyAggregateRepository _repository;
+    private readonly IQueryExecutor<MyDomainReadModel, Guid> _queryExecutor;
 
-    public GetMyDomainByIdQueryHandler(IMyAggregateRepository repository)
+    public GetMyDomainByIdQueryHandler(IQueryExecutor<MyDomainReadModel, Guid> queryExecutor)
     {
-        _repository = repository;
+        _queryExecutor = queryExecutor;
     }
 
     public async Task<ErrorOr<MyDomainResult>> Handle(GetMyDomainByIdQuery request, CancellationToken cancellationToken)
     {
-        var id = MyAggregateId.Create(request.Id);
+        var model = await _queryExecutor.GetByIdAsync(request.Id);
 
-        var aggregate = await _repository.GetByIdAsync(id);
-
-        if (aggregate is null)
+        if (model is null)
         {
             return Error.NotFound();
         }
 
         var result = new MyDomainResult(
-            aggregate.Id.Value,
-            aggregate.Name,
-            aggregate.Description,
-            aggregate.CreatedOn,
-            aggregate.UpdatedOn);
+            model.Id,
+            model.Name,
+            model.Description,
+            model.CreatedOn,
+            model.UpdatedOn);
 
         return result;        
     }

@@ -6,7 +6,7 @@ using MyDomain.Infrastructure.Persistence.Options;
 
 using MySql.Data.MySqlClient;
 
-namespace MyDomain.Tests.Integration.Repositories;
+namespace MyDomain.Tests.Integration.Infrastructure;
 
 public class DatabaseHelper<TId, TRecord>
 {
@@ -23,7 +23,7 @@ public class DatabaseHelper<TId, TRecord>
         _tableName = tableName;
         _idColumnName = idColumnName;
 
-        Options = new DatabaseOptions 
+        Options = new DatabaseOptions
         {
             Server = "localhost",
             Port = 30000,
@@ -86,5 +86,5 @@ public class DatabaseHelper<TId, TRecord>
         valuesByPropertyName.AddRange(enumProperties.Select(ep => new KeyValuePair<string, object>(ep.Name, ep.GetValue(record)?.ToString())));
 
         return new DynamicParameters(valuesByPropertyName);
-    }   
+    }
 }

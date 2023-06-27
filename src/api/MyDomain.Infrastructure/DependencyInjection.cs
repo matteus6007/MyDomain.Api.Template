@@ -2,8 +2,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
+using MyDomain.Domain.Models;
 using MyDomain.Infrastructure.Persistence;
 using MyDomain.Infrastructure.Persistence.Options;
+using MyDomain.Infrastructure.Persistence.QueryExecutors;
 
 namespace MyDomain.Infrastructure
 {
@@ -16,6 +18,7 @@ namespace MyDomain.Infrastructure
             services.Configure<DatabaseOptions>(opts => configuration.GetSection("MyDomain:Database").Bind(opts));
             //services.AddSingleton<IMyAggregateRepository, InMemoryMyAggregateRepository>();
             services.AddScoped<IMyAggregateRepository, MyAggregateRepository>();
+            services.AddScoped<IQueryExecutor<MyDomainReadModel, Guid>, MyDomainQueryExecutor>();
 
             return services;
         }

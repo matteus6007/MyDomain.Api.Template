@@ -8,6 +8,7 @@ using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence;
 using MyDomain.Infrastructure.Persistence.Options;
+using MyDomain.Tests.Integration.Infrastructure;
 
 using Shouldly;
 
@@ -47,6 +48,7 @@ public class MyAggregateRepositoryTests
         result.ShouldNotBeNull();
         result.Version.ShouldBe(aggregate.Version);
         result.Name.ShouldBe(aggregate.Name);
+        result.Description.ShouldBe(aggregate.Description);
         result.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
         result.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
     }
