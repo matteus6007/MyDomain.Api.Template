@@ -4,8 +4,9 @@ using Shouldly;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.MyAggregate;
-using MyDomain.Infrastructure.Persistence;
+using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Domain.MyAggregate.ValueObjects;
+using ErrorOr;
 
 namespace MyDomain.Tests.Integration.Repositories;
 
@@ -54,17 +55,25 @@ public class InMemoryMyAggregateRepositoryTests
         string updatedDescription)
     {
         // Arrange
+        var expectedVersion = existingAggregate.Version + 1;
+
         await GivenRecordExists(existingAggregate);
 
         // Act
         existingAggregate.Update(updatedName, updatedDescription, DateTime.UtcNow);
 
-        // Assert
-        var result = await _sut.GetByIdAsync(existingAggregate.Id);
+        ErrorOr<Updated> result = await _sut.UpdateAsync(existingAggregate);
 
-        result.ShouldNotBeNull();
-        result.Name.ShouldBeSameAs(updatedName);
-        result.Description.ShouldBeSameAs(updatedDescription);
+        // Assert
+        result.IsError.ShouldBeFalse();
+        result.Value.ShouldBe(Result.Updated);
+
+        var record = await _sut.GetByIdAsync(existingAggregate.Id);
+
+        record.ShouldNotBeNull();
+        record.Version.ShouldBe(expectedVersion);
+        record.Name.ShouldBe(updatedName);
+        record.Description.ShouldBe(updatedDescription);
     }
 
     private async Task<MyAggregate> GivenRecordExists(string name, string description)

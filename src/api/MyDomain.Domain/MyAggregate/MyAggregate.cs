@@ -13,13 +13,14 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
 
     public DateTime UpdatedOn { get; private set; }
 
-    private MyAggregate(
+    public MyAggregate(
         MyAggregateId id,
+        int version,
         string name,
         string description,
         DateTime createdOn,
         DateTime updatedOn)
-         : base(id)
+         : base(id, version)
     {
         Name = name;
         Description = description;
@@ -34,6 +35,7 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
     {
         return new(
             MyAggregateId.CreateUnique(),
+            1,
             name,
             description,
             createdOn,
@@ -45,6 +47,7 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateId>
         string description,
         DateTime updatedOn)
     {
+        Version++;
         Name = name;
         Description = description;
         UpdatedOn = updatedOn;

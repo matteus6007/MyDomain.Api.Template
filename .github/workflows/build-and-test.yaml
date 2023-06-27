@@ -7,7 +7,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +19,21 @@ jobs:
       run: dotnet restore $SOURCE_DIRECTORY
     - name: Build
       run: dotnet build $SOURCE_DIRECTORY
-    - name: Test with the dotnet CLI
-      run: dotnet test $SOURCE_DIRECTORY/tests/**/*.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Launch local test environment
+      run: docker-compose -f docker-compose.dev-env.yml up -d
+    - name: Test with docker compose
+      run: docker-compose -f docker-compose.test.yml up --build
+    - name: Teardown local test environment
+      run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans
     - name: Upload Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
-        path: "TestResults/test-results.trx"
+        path: "testresults/test-results.trx"

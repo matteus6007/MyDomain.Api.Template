@@ -24,7 +24,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
     public async Task<ErrorOr<MyDomainResult>> Handle(UpdateMyDomainCommand request, CancellationToken cancellationToken)
     {
-        var id = new MyAggregateId(request.Id);
+        var id = MyAggregateId.Create(request.Id);
 
         var aggregate = await _repository.GetByIdAsync(id);
 
@@ -35,7 +35,12 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
         aggregate.Update(request.Name, request.Description, _dateTime.UtcNow);
 
-        await _repository.UpdateAsync(aggregate);
+        ErrorOr<Updated> response = await _repository.UpdateAsync(aggregate);
+
+        if (response.IsError)
+        {
+            return response.FirstError;
+        }        
 
         var result = new MyDomainResult(
             aggregate.Id.Value,

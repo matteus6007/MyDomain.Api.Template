@@ -1,0 +1,36 @@
+version: '3.7'
+
+networks:
+  default:
+    name: mydomain-api
+
+services:
+  local-db:
+    image: mysql:5.7
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "30000:3306"
+    volumes:
+      - localdbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_DATABASE: localdefaultdb
+  local-db-migrations:
+    depends_on:
+      - local-db
+    networks:
+      - default
+    image: flyway/flyway:7.15
+    volumes:
+      - ./db/sql:/flyway/sql
+      - ./db/config:/flyway/conf
+    command: migrate -connectRetries=20
+    environment:
+      FLYWAY_EDITION: community
+      FLYWAY_CONFIG_FILES: /flyway/conf/application.conf
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+
+volumes:
+  localdbdata:
