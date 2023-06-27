@@ -13,5 +13,7 @@ services:
       context: .
       dockerfile: src/api/MyDomain.Api/Dockerfile
       target: test
+    env_file:
+      - ./docker-compose.env
     volumes:
       - ./testresults:/src/tests/MyDomain.Tests/TestResults

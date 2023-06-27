@@ -2,6 +2,8 @@ using System.Data;
 
 using Dapper;
 
+using ErrorOr;
+
 using Microsoft.Extensions.Options;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
@@ -40,7 +42,7 @@ public class MyAggregateRepository : IMyAggregateRepository
         return aggregate;
     }
 
-    public async Task AddAsync(MyAggregate data)
+    public async Task<ErrorOr<Created>> AddAsync(MyAggregate data)
     {
         using var connection = new MySqlConnection(_writeConnectionString);
         await connection.OpenAsync();
@@ -48,7 +50,7 @@ public class MyAggregateRepository : IMyAggregateRepository
         using var transaction = await connection.BeginTransactionAsync();
         var parameters = new
         {
-            Id = data.Id.Value.ToString(),
+            Id = data.Id.Value,
             data.Version,
             data.Name,
             data.Description,
@@ -66,9 +68,11 @@ public class MyAggregateRepository : IMyAggregateRepository
             commandType: CommandType.Text);
 
         transaction.Commit();
+
+        return Result.Created;
     }
 
-    public async Task UpdateAsync(MyAggregate data)
+    public async Task<ErrorOr<Updated>> UpdateAsync(MyAggregate data)
     {
         using var connection = new MySqlConnection(_writeConnectionString);
         await connection.OpenAsync();
@@ -76,8 +80,9 @@ public class MyAggregateRepository : IMyAggregateRepository
         using var transaction = await connection.BeginTransactionAsync();
         var parameters = new
         {
-            Id = data.Id.Value.ToString(),
+            Id = data.Id.Value,
             data.Version,
+            data.PreviousVersion,
             data.Name,
             data.Description,
             data.CreatedOn,
@@ -86,7 +91,7 @@ public class MyAggregateRepository : IMyAggregateRepository
 
         // TODO: Add version check
         const string sql = @"UPDATE MyAggregates SET Version = @Version, Name = @Name, Description = @Description, CreatedOn = @CreatedOn, UpdatedOn = @UpdatedOn
-                            WHERE Id = @Id;";
+                            WHERE Id = @Id AND Version = @PreviousVersion;";
 
         var recordsUpdated = await connection.ExecuteAsync(
             sql,
@@ -94,6 +99,35 @@ public class MyAggregateRepository : IMyAggregateRepository
             transaction,
             commandType: CommandType.Text);
 
+        if (recordsUpdated == 0)
+        {
+            var currentVersion = await GetCurrentVersionAsync(data.Id.Value, transaction);
+
+            if (currentVersion == 0)
+            {
+                return Error.NotFound();
+            }
+
+            return Error.Conflict(description: $"Version is out of date. Expected: {data.PreviousVersion}. Required: {currentVersion}");
+        }
+
         transaction.Commit();
+
+        return Result.Updated;
     }
+
+    private static async Task<long> GetCurrentVersionAsync(Guid id, MySqlTransaction transaction)
+    {
+        const string sql = @"SELECT Version
+                            FROM MyAggregates
+                            WHERE Id = @Id;";
+
+        var currentVersion = await transaction.Connection.ExecuteScalarAsync<long>(
+            sql,
+            new { id },
+            transaction,
+            commandType: CommandType.Text);
+
+        return currentVersion;
+    }    
 }

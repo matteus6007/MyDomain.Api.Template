@@ -35,7 +35,12 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
         aggregate.Update(request.Name, request.Description, _dateTime.UtcNow);
 
-        await _repository.UpdateAsync(aggregate);
+        ErrorOr<Updated> response = await _repository.UpdateAsync(aggregate);
+
+        if (response.IsError)
+        {
+            return response.FirstError;
+        }        
 
         var result = new MyDomainResult(
             aggregate.Id.Value,

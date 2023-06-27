@@ -1,5 +1,7 @@
 using AutoFixture.Xunit2;
 
+using ErrorOr;
+
 using Microsoft.Extensions.Options;
 
 using Moq;
@@ -65,19 +67,22 @@ public class MyAggregateRepositoryTests : IDisposable
         var aggregate = MyAggregate.Create(name, description, CreatedOn);
 
         // Act
-        await _sut.AddAsync(aggregate);
+        ErrorOr<Created> result = await _sut.AddAsync(aggregate);
 
         _databaseHelper.TrackId(aggregate.Id.Value);
 
         // Assert
-        var result = await ThenRecordExists(aggregate.Id);
+        result.IsError.ShouldBeFalse();
+        result.Value.ShouldBe(Result.Created);
 
-        result.ShouldNotBeNull();
-        result.Version.ShouldBe(1);
-        result.Name.ShouldBe(name);
-        result.Description.ShouldBe(description);
-        result.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
-        result.UpdatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
+        var record = await ThenRecordExists(aggregate.Id);
+
+        record.ShouldNotBeNull();
+        record.Version.ShouldBe(1);
+        record.Name.ShouldBe(name);
+        record.Description.ShouldBe(description);
+        record.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
+        record.UpdatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
     }
 
     [Theory]
@@ -95,17 +100,64 @@ public class MyAggregateRepositoryTests : IDisposable
         aggregate.Update(updatedName, updatedDescription, UpdatedOn);
 
         // Act
-        await _sut.UpdateAsync(aggregate);
+        ErrorOr<Updated> result = await _sut.UpdateAsync(aggregate);
 
         // Assert
-        var result = await ThenRecordExists(aggregate.Id);
+        result.IsError.ShouldBeFalse();
+        result.Value.ShouldBe(Result.Updated);
 
-        result.ShouldNotBeNull();
-        result.Version.ShouldBe(expectedVersion);
-        result.Name.ShouldBe(updatedName);
-        result.Description.ShouldBe(updatedDescription);
-        result.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
-        result.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
+        var record = await ThenRecordExists(aggregate.Id);
+
+        record.ShouldNotBeNull();
+        record.Version.ShouldBe(expectedVersion);
+        record.Name.ShouldBe(updatedName);
+        record.Description.ShouldBe(updatedDescription);
+        record.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
+        record.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task UpdateAsync_WhenRecordDoesNotExist_ThenShouldThrowException(
+        MyAggregate aggregate,
+        string updatedName,
+        string updatedDescription)
+    {
+        // Arrange
+        aggregate.Update(updatedName, updatedDescription, UpdatedOn);
+
+        // Act
+        ErrorOr<Updated> result = await _sut.UpdateAsync(aggregate);
+
+        // Assert
+        result.IsError.ShouldBeTrue();
+        result.FirstError.Type.ShouldBe(ErrorType.NotFound);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task UpdateAsync_WhenRecordVersionDoesNotMatch_ThenShouldThrowException(
+        string updatedName,
+        string updatedDescription)
+    {
+        // Arrange
+        var id = MyAggregateId.CreateUnique();
+
+        var existingAggregate = new MyAggregate(id, 2, "Test", "Test", CreatedOn, CreatedOn);
+
+        await GivenRecordExists(existingAggregate);
+
+        // reset version
+        var aggregate = new MyAggregate(id, 1, "Test", "Test", CreatedOn, CreatedOn);
+        aggregate.Update(updatedName, updatedDescription, UpdatedOn);
+
+        // Act
+        ErrorOr<Updated> result = await _sut.UpdateAsync(aggregate);
+
+        // Assert
+        result.IsError.ShouldBeTrue();
+        result.FirstError.Type.ShouldBe(ErrorType.Conflict);
+        result.FirstError.Description.ShouldContain("version is out of date");
     }
 
     private async Task GivenRecordExists(MyAggregate record)

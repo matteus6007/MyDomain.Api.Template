@@ -45,3 +45,13 @@ Start environment:
 Stop environment:
 
 `.\environment.ps1 stop`
+
+## Running Tests
+
+Locally:
+
+`dotnet test ./src/api`
+
+Using `docker-compose` _(same as pipeling)_:
+
+`docker-compose -f docker-compose.test.yml up --build`

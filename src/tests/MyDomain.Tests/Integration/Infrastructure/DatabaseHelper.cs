@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 using System.Data;
 
 using Dapper;
@@ -66,7 +68,10 @@ public class DatabaseHelper<TId, TRecord> where TRecord : class
         AddedRecords.Add(id);
 
         using var connection = new MySqlConnection(_writeConnectionString);
-        var properties = record.GetType().GetProperties().Select(x => x.Name).ToList();
+        var properties = record.GetType().GetProperties()
+            .Where(prop => !prop.IsDefined(typeof(JsonIgnoreAttribute), false))
+            .Select(x => x.Name)
+            .ToList();
 
         var sql = $@"INSERT INTO {_tableName} 
                     ({string.Join(",", properties.Select(x => $"`{x}`"))})
