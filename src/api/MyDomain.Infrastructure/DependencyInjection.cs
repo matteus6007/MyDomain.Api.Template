@@ -13,9 +13,9 @@ namespace MyDomain.Infrastructure
         {
             MyAggregateIdTypeHandler.AddTypeHandlers();
 
-            services.Configure<DatabaseOptions>(setting => configuration.GetSection("MyDomain:Database"));
-            services.AddSingleton<IMyAggregateRepository, InMemoryMyAggregateRepository>();
-            //services.AddScoped<IMyAggregateRepository, MyAggregateRepository>();
+            services.Configure<DatabaseOptions>(opts => configuration.GetSection("MyDomain:Database").Bind(opts));
+            //services.AddSingleton<IMyAggregateRepository, InMemoryMyAggregateRepository>();
+            services.AddScoped<IMyAggregateRepository, MyAggregateRepository>();
 
             return services;
         }

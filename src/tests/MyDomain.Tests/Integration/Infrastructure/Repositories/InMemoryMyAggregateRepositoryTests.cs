@@ -54,6 +54,8 @@ public class InMemoryMyAggregateRepositoryTests
         string updatedDescription)
     {
         // Arrange
+        var expectedVersion = existingAggregate.Version + 1;
+
         await GivenRecordExists(existingAggregate);
 
         // Act
@@ -63,7 +65,7 @@ public class InMemoryMyAggregateRepositoryTests
         var result = await _sut.GetByIdAsync(existingAggregate.Id);
 
         result.ShouldNotBeNull();
-        result.Version.ShouldBe(2);
+        result.Version.ShouldBe(expectedVersion);
         result.Name.ShouldBe(updatedName);
         result.Description.ShouldBe(updatedDescription);
     }
