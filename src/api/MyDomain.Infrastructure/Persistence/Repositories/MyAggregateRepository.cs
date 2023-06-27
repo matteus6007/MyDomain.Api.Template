@@ -11,7 +11,7 @@ using MyDomain.Infrastructure.Persistence.Options;
 
 using MySql.Data.MySqlClient;
 
-namespace MyDomain.Infrastructure.Persistence;
+namespace MyDomain.Infrastructure.Persistence.Repositories;
 
 public class MyAggregateRepository : IMyAggregateRepository
 {
@@ -27,7 +27,7 @@ public class MyAggregateRepository : IMyAggregateRepository
     public async Task<MyAggregate?> GetByIdAsync(MyAggregateId id)
     {
         using var connection = new MySqlConnection(_readConnectionString);
-        
+
         const string sql = @"SELECT Id,Version,Name,Description,CreatedOn,UpdatedOn
                             FROM MyAggregates
                             WHERE Id = @Id;";
@@ -38,7 +38,7 @@ public class MyAggregateRepository : IMyAggregateRepository
             commandType: CommandType.Text);
 
         return aggregate;
-    }    
+    }
 
     public async Task AddAsync(MyAggregate data)
     {

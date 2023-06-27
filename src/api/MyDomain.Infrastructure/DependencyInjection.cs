@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.Models;
-using MyDomain.Infrastructure.Persistence;
 using MyDomain.Infrastructure.Persistence.Options;
 using MyDomain.Infrastructure.Persistence.QueryExecutors;
+using MyDomain.Infrastructure.Persistence.Repositories;
 
 namespace MyDomain.Infrastructure
 {

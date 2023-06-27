@@ -4,7 +4,7 @@ using Dapper;
 
 using MyDomain.Domain.MyAggregate.ValueObjects;
 
-namespace MyDomain.Infrastructure.Persistence;
+namespace MyDomain.Infrastructure.Persistence.Repositories;
 
 public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyAggregateId>
 {

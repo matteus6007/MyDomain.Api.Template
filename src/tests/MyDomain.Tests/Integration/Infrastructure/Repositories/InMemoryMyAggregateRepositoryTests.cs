@@ -4,7 +4,7 @@ using Shouldly;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.MyAggregate;
-using MyDomain.Infrastructure.Persistence;
+using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 
 namespace MyDomain.Tests.Integration.Repositories;

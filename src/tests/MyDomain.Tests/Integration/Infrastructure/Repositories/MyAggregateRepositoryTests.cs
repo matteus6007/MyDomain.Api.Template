@@ -6,8 +6,8 @@ using Moq;
 
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
-using MyDomain.Infrastructure.Persistence;
 using MyDomain.Infrastructure.Persistence.Options;
+using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Tests.Integration.Infrastructure;
 
 using Shouldly;

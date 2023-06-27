@@ -2,7 +2,7 @@ using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 
-namespace MyDomain.Infrastructure.Persistence;
+namespace MyDomain.Infrastructure.Persistence.Repositories;
 
 public class InMemoryMyAggregateRepository : IMyAggregateRepository
 {
@@ -13,7 +13,7 @@ public class InMemoryMyAggregateRepository : IMyAggregateRepository
         await Task.CompletedTask;
 
         return _items.FirstOrDefault(x => x.Id == id);
-    }    
+    }
 
     public async Task AddAsync(MyAggregate data)
     {
