@@ -14,7 +14,7 @@ using Shouldly;
 
 namespace MyDomain.Tests.Integration.Repositories;
 
-public class MyAggregateRepositoryTests
+public class MyAggregateRepositoryTests : IDisposable
 {
     private static readonly DateTime CreatedOn = new(2013, 1, 1);
     private static readonly DateTime UpdatedOn = new(2013, 1, 2);
@@ -32,6 +32,8 @@ public class MyAggregateRepositoryTests
 
         _sut = new MyAggregateRepository(options.Object);
     }
+
+    public void Dispose() => _databaseHelper.CleanTableAsync().GetAwaiter().GetResult();
 
     [Theory]
     [AutoData]
@@ -64,6 +66,8 @@ public class MyAggregateRepositoryTests
 
         // Act
         await _sut.AddAsync(aggregate);
+
+        _databaseHelper.TrackId(aggregate.Id.Value);
 
         // Assert
         var result = await ThenRecordExists(aggregate.Id);
@@ -106,7 +110,7 @@ public class MyAggregateRepositoryTests
 
     private async Task GivenRecordExists(MyAggregate record)
     {
-        await _databaseHelper.AddRecordAsync(record);
+        await _databaseHelper.AddRecordAsync(record.Id.Value, record);
     }
 
     private async Task<MyAggregate> ThenRecordExists(MyAggregateId id)

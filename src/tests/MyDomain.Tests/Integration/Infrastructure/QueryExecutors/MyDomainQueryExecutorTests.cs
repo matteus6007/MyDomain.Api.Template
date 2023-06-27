@@ -12,7 +12,7 @@ using Shouldly;
 
 namespace MyDomain.Tests.Integration.Infrastructure.QueryExecutors;
 
-public class MyDomainQueryExecutorTests
+public class MyDomainQueryExecutorTests : IDisposable
 {
     private readonly DatabaseHelper<Guid, MyDomainReadModel> _databaseHelper;
     private readonly MyDomainQueryExecutor _sut;
@@ -26,6 +26,8 @@ public class MyDomainQueryExecutorTests
 
         _sut = new MyDomainQueryExecutor(options.Object);
     }
+
+    public void Dispose() => _databaseHelper.CleanTableAsync().GetAwaiter().GetResult();
 
     [Theory]
     [AutoData]
@@ -47,6 +49,6 @@ public class MyDomainQueryExecutorTests
 
     private async Task GivenRecordExists(MyDomainReadModel model)
     {
-        await _databaseHelper.AddRecordAsync(model);
+        await _databaseHelper.AddRecordAsync(model.Id, model);
     }
 }
