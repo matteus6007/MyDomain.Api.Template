@@ -1,3 +1,6 @@
+using HealthChecks.UI.Client;
+
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 using MyDomain.Api;
@@ -12,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddPresentation();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services
+        .ConfigureHealthChecks(builder.Configuration)
+        .AddInfrastructureHealthChecks(builder.Configuration);
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
@@ -39,7 +45,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseMiddleware<BuildVersionResponseMiddleware>();
 app.UseExceptionHandler("/error");
+app.UseRouting();
+app.UseHealthChecks("/healthcheck/tests", new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse });
 app.MapControllers();
+app.MapHealthChecksUI();
 app.Run();
 
 public partial class Program { }
