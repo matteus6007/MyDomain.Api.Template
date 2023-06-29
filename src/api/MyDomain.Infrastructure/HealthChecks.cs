@@ -16,8 +16,21 @@ public static class HealthChecks
             return healthChecksBuilder;
         }
 
-        healthChecksBuilder.AddMySql(databaseOptions.ReadConnectionString(), name: "Read MySql Database");
-        healthChecksBuilder.AddMySql(databaseOptions.WriteConnectionString(), name: "Write MySql Database");
+        List<string> readDbTags = new() { databaseOptions.Server };
+
+        if (!string.IsNullOrEmpty(databaseOptions.ReplicaServer))
+        {
+            readDbTags.Add(databaseOptions.ReplicaServer);
+        }
+
+        healthChecksBuilder.AddMySql(
+            databaseOptions.ReadConnectionString(),
+            name: "Read MySql Database",
+            tags: readDbTags);
+        healthChecksBuilder.AddMySql(
+            databaseOptions.WriteConnectionString(),
+            name: "Write MySql Database",
+            tags: new[] { databaseOptions.Server });
 
         return healthChecksBuilder;
     }    

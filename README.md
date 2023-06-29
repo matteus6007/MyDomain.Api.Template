@@ -48,28 +48,30 @@ Stop environment:
 
 ## Running the Application
 
-Locally:
-
-`dotnet run --project ./src/api/MyDomain.Api`
+[Health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks) can be extended using https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
 
 _Note: requires local test environment._
 
-### Testing
+### Locally
 
-Locally:
+`dotnet run --project ./src/api/MyDomain.Api`
+
+* Swagger - `http://localhost:5185/swagger/index.html`
+* Health checks - `http://localhost:5185/healthchecks-ui`
+
+### Docker
+
+`docker-compose up --build`
+
+* Swagger - `http://localhost:1001/swagger/index.html`
+* Health checks - `http://localhost:1001/healthchecks-ui`
+
+## Testing
+
+### Locally
 
 `dotnet test ./src/api`
 
-Using `docker-compose` _(to replicate pipeline)_:
+### Docker
 
 `docker-compose -f docker-compose.test.yml up --build`
-
-### Swagger
-
-Navigate to `http://localhost:5185/swagger/index.html`
-
-### Health Checks
-
-https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks and https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
-
-Navigate to `http://localhost:5185/healthchecks-ui` to view health of API dependencies.
