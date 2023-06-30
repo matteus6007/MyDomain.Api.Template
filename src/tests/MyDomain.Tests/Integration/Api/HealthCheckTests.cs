@@ -47,6 +47,6 @@ public class HealthCheckTests
     private static void Then_Response_ShouldBeOk(HttpResponseMessage response)
     {
         response.ShouldNotBeNull();
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 }
