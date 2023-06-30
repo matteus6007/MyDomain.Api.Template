@@ -28,8 +28,9 @@ jobs:
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
     - name: Test with docker compose
-      run: docker-compose -f docker-compose.test.yml up --build
+      run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
     - name: Teardown local test environment
+      if: always()
       run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans
     - name: Upload Test Results
       if: always()
