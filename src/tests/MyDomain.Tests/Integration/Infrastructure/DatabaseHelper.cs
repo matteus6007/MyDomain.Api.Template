@@ -107,7 +107,7 @@ public class DatabaseHelper<TId, TRecord> where TRecord : class
         var nonEnumPropertiesByName = properties.Where(pi => !pi.PropertyType.IsEnum).Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(record)));
         var enumProperties = properties.Where(pi => pi.PropertyType.IsEnum);
         var valuesByPropertyName = new List<KeyValuePair<string, object>>(nonEnumPropertiesByName);
-        valuesByPropertyName.AddRange(enumProperties.Select(ep => new KeyValuePair<string, object>(ep.Name, ep.GetValue(record)?.ToString())));
+        valuesByPropertyName.AddRange(enumProperties.Select(ep => new KeyValuePair<string, object>(ep.Name, ep.GetValue(record)?.ToString() ?? string.Empty)));
 
         return new DynamicParameters(valuesByPropertyName);
     }

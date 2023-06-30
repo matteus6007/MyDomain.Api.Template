@@ -34,7 +34,7 @@ public class MyAggregateRepository : IMyAggregateRepository
                             FROM MyAggregates
                             WHERE Id = @Id;";
 
-        var aggregate = await connection.QuerySingleOrDefaultAsync<MyAggregate>(
+        var aggregate = await connection.QuerySingleOrDefaultAsync<MyAggregate?>(
             sql,
             new { id = id.Value.ToString() },
             commandType: CommandType.Text);

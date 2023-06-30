@@ -46,7 +46,11 @@ app.UseAuthorization();
 app.UseMiddleware<BuildVersionResponseMiddleware>();
 app.UseExceptionHandler("/error");
 app.UseRouting();
-app.UseHealthChecks("/healthcheck/tests", new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse });
+app.UseHealthChecks("/healthcheck/tests", new HealthCheckOptions 
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 app.MapControllers();
 app.MapHealthChecksUI();
 app.Run();

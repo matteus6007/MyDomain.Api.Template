@@ -1,0 +1,14 @@
+version: '3.7'
+
+networks:
+  mydomain-api:
+    external: true
+
+services:
+  mydomain.api:
+    networks:
+      - mydomain-api
+    image: mydomain.api
+    build:
+      context: .
+      dockerfile: src/api/MyDomain.Api/Dockerfile

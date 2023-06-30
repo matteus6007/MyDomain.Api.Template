@@ -14,14 +14,6 @@ RUN dotnet restore "api/MyDomain.Api/MyDomain.Api.csproj"
 WORKDIR "/src/api/MyDomain.Api"
 RUN dotnet build "MyDomain.Api.csproj" -c Release --no-restore -o /app/build
 
-# test stage -- exposes optional entrypoint
-# target entrypoint with: docker build --target test
-FROM build AS test
-WORKDIR /src/tests
-COPY ./src/tests/ .
-
-ENTRYPOINT ["dotnet", "test", "--logger:\"trx;LogFilePath=./TestResults/test-results.trx;MethodFormat=Class;FailureBodyFormat=Verbose\"", "--configuration:release", "/p:CollectCoverage=true", "/p:CoverletOutputFormat=cobertura", "/p:CoverletOutput=./TestResults/", "MyDomain.Tests/MyDomain.Tests.csproj"]
-
 # publish
 FROM build AS publish
 ARG BUILD_VERSION

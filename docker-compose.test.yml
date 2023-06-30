@@ -11,9 +11,9 @@ services:
     image: api.test
     build:
       context: .
-      dockerfile: src/api/MyDomain.Api/Dockerfile
+      dockerfile: src/tests/MyDomain.Tests/Dockerfile
       target: test
     env_file:
-      - ./docker-compose.env
+      - ./docker-compose.env   
     volumes:
       - ./testresults:/src/tests/MyDomain.Tests/TestResults
