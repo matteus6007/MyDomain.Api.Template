@@ -8,7 +8,7 @@ services:
   mydomain.api:
     networks:
       - mydomain-api
-    image: mydomain.api
-    build:
-      context: .
-      dockerfile: src/api/MyDomain.Api/Dockerfile
+    ports:
+      - "1001:80"
+      - "1002:443"
+    env_file: docker-compose.env

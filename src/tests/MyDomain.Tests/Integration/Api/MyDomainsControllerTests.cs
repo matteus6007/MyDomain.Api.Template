@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 using Shouldly;
 
-namespace MyDomain.Tests.Integration.Controllers;
+namespace MyDomain.Tests.Integration.Api;
 
 [Collection(nameof(ApiWebApplicationFactoryCollection))]
 public class MyDomainsControllerTests
@@ -32,8 +32,8 @@ public class MyDomainsControllerTests
     {
         // Arrange
         var result = await Given_MyDomainExists(name);
-        var request = Given_GetMyDomainByIdRequest(result.Id);
-        
+        var request = Given_GetMyDomainByIdRequest(result!.Id);
+
         // Act
         var response = await _client.SendAsync(request);
         var content = await response.Content.ReadAsStringAsync();
@@ -96,7 +96,7 @@ public class MyDomainsControllerTests
     {
         // Arrange
         var result = await Given_MyDomainExists(name);
-        var request = Given_UpdateDomainRequest(result.Id, name, description);
+        var request = Given_UpdateDomainRequest(result!.Id, name, description);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -120,7 +120,7 @@ public class MyDomainsControllerTests
 
         // Assert
         Then_Response_ShouldBeBadRequest(response);
-    }       
+    }
 
     private HttpRequestMessage Given_GetMyDomainByIdRequest(Guid id)
     {
@@ -159,16 +159,16 @@ public class MyDomainsControllerTests
         };
     }
 
-    private async Task<MyDomainDto> Given_MyDomainExists(string name)
+    private async Task<MyDomainDto?> Given_MyDomainExists(string name)
     {
         var createRequest = Given_CreateDomainRequest(name);
         var createResponse = await _client.SendAsync(createRequest);
 
         var content = await createResponse.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<MyDomainDto>(content);
-        
+
         return result;
-    }     
+    }
 
     private static void Then_Response_ShouldBeOk(HttpResponseMessage response)
     {
@@ -180,7 +180,7 @@ public class MyDomainsControllerTests
     {
         response.ShouldNotBeNull();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }    
+    }
 
     private static void Then_Response_ShouldBeCreated(HttpResponseMessage response)
     {
@@ -200,7 +200,7 @@ public class MyDomainsControllerTests
         actualResult.ShouldNotBeNull();
         actualResult.Id.ShouldNotBe(Guid.Empty);
         actualResult.Name.ShouldBe(name);
-    }    
+    }
 
     private static void Then_Content_ShouldBeCorrect(string content, Guid id, string name, string description)
     {

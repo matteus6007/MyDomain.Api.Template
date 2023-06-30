@@ -1,4 +1,4 @@
-namespace MyDomain.Tests.Integration.Controllers;
+namespace MyDomain.Tests.Integration.Api;
 
 [CollectionDefinition(nameof(ApiWebApplicationFactoryCollection))]
 public class ApiWebApplicationFactoryCollection : ICollectionFixture<ApiWebApplicationFactory>

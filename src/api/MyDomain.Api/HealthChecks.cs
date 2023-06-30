@@ -5,18 +5,21 @@ public static class HealthChecks
     public static IHealthChecksBuilder ConfigureHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
         var healthChecksBuilder = services.AddHealthChecks();
-
-        services.AddHealthChecksUI(setup =>
+        
+        if (bool.TryParse(configuration["HealthChecksUI_Enabled"], out var enabled) && enabled)
         {
-            var healthCheckEndpoint = "http://localhost/healthcheck/tests";
+            services.AddHealthChecksUI(setup =>
+            {
+                var healthCheckEndpoint = "http://localhost/healthcheck/tests";
 
 #if DEBUG
-            healthCheckEndpoint = "/healthcheck/tests";
+                healthCheckEndpoint = "/healthcheck/tests";
 #endif
 
-            setup.AddHealthCheckEndpoint("API", healthCheckEndpoint);
-            setup.SetEvaluationTimeInSeconds(60);
-        }).AddInMemoryStorage();
+                setup.AddHealthCheckEndpoint("API", healthCheckEndpoint);
+                setup.SetEvaluationTimeInSeconds(60);
+            }).AddInMemoryStorage();
+        }
 
         return healthChecksBuilder;
     }    
