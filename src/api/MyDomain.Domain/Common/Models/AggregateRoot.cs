@@ -1,19 +1,35 @@
-using Newtonsoft.Json;
+using MyDomain.Domain.Common.Interfaces;
 
 namespace MyDomain.Domain.Common.Models;
 
-public abstract class AggregateRoot<TId> : Entity<TId>
+public abstract class AggregateRoot<TState, TId> : Entity<TId>
     where TId : notnull
+    where TState : IAggregateState<TId>
 {
-    public int Version { get; protected set; }
+    private readonly List<IDomainEvent> _domainEvents = new();
 
-    [JsonIgnore]
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    public bool IsNew { get; protected set; }
+
+    public int Version => State.Version;
+
     public int PreviousVersion { get; protected set; }
 
-    protected AggregateRoot(TId id, int version)
-     : base(id)
+    public TState State { get; protected set; }
+
+    protected AggregateRoot(TState state)
+     : base(state.Id)
     {
-        Version = version;
-        PreviousVersion = version;
+        State = state;
+        PreviousVersion = state.Version;
+        IsNew = state.Version == 0;
+    }
+
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        State.Version++;
+
+        _domainEvents.Add(domainEvent);
     }
 }

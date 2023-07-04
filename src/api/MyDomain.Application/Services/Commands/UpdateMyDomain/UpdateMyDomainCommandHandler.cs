@@ -44,10 +44,10 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
         var result = new MyDomainResult(
             aggregate.Id.Value,
-            aggregate.Name,
-            aggregate.Description,
-            aggregate.CreatedOn,
-            aggregate.UpdatedOn);
+            aggregate.State.Name,
+            aggregate.State.Description,
+            aggregate.State.CreatedOn,
+            aggregate.State.UpdatedOn);
 
         return result;        
     }

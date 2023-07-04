@@ -72,8 +72,8 @@ public class InMemoryMyAggregateRepositoryTests
 
         record.ShouldNotBeNull();
         record.Version.ShouldBe(expectedVersion);
-        record.Name.ShouldBe(updatedName);
-        record.Description.ShouldBe(updatedDescription);
+        record.State.Name.ShouldBe(updatedName);
+        record.State.Description.ShouldBe(updatedDescription);
     }
 
     private async Task<MyAggregate> GivenRecordExists(string name, string description)

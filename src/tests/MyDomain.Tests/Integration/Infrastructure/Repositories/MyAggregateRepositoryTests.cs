@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 
 using Moq;
 
+using MyDomain.Domain;
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
@@ -20,12 +21,12 @@ public class MyAggregateRepositoryTests : IDisposable
 {
     private static readonly DateTime CreatedOn = new(2013, 1, 1);
     private static readonly DateTime UpdatedOn = new(2013, 1, 2);
-    private readonly DatabaseHelper<Guid, MyAggregate> _databaseHelper;
+    private readonly DatabaseHelper<Guid, MyAggregateState> _databaseHelper;
     private readonly MyAggregateRepository _sut;
 
     public MyAggregateRepositoryTests()
     {
-        _databaseHelper = new DatabaseHelper<Guid, MyAggregate>("MyAggregates", "Id");
+        _databaseHelper = new DatabaseHelper<Guid, MyAggregateState>("MyAggregates", "Id");
 
         var options = new Mock<IOptionsSnapshot<DatabaseOptions>>();
         options.Setup(_ => _.Value).Returns(_databaseHelper.Options);
@@ -51,10 +52,10 @@ public class MyAggregateRepositoryTests : IDisposable
         // Assert
         result.ShouldNotBeNull();
         result.Version.ShouldBe(aggregate.Version);
-        result.Name.ShouldBe(aggregate.Name);
-        result.Description.ShouldBe(aggregate.Description);
-        result.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
-        result.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
+        result.State.Name.ShouldBe(aggregate.State.Name);
+        result.State.Description.ShouldBe(aggregate.State.Description);
+        result.State.CreatedOn.ShouldBe(aggregate.State.CreatedOn, TimeSpan.FromSeconds(1));
+        result.State.UpdatedOn.ShouldBe(aggregate.State.UpdatedOn, TimeSpan.FromSeconds(1));
     }
 
     [Theory]
@@ -81,8 +82,8 @@ public class MyAggregateRepositoryTests : IDisposable
         record.Version.ShouldBe(1);
         record.Name.ShouldBe(name);
         record.Description.ShouldBe(description);
-        record.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
-        record.UpdatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
+        record.CreatedOn.ShouldBe(aggregate.State.CreatedOn, TimeSpan.FromSeconds(1));
+        record.UpdatedOn.ShouldBe(aggregate.State.CreatedOn, TimeSpan.FromSeconds(1));
     }
 
     [Theory]
@@ -112,8 +113,8 @@ public class MyAggregateRepositoryTests : IDisposable
         record.Version.ShouldBe(expectedVersion);
         record.Name.ShouldBe(updatedName);
         record.Description.ShouldBe(updatedDescription);
-        record.CreatedOn.ShouldBe(aggregate.CreatedOn, TimeSpan.FromSeconds(1));
-        record.UpdatedOn.ShouldBe(aggregate.UpdatedOn, TimeSpan.FromSeconds(1));
+        record.CreatedOn.ShouldBe(aggregate.State.CreatedOn, TimeSpan.FromSeconds(1));
+        record.UpdatedOn.ShouldBe(aggregate.State.UpdatedOn, TimeSpan.FromSeconds(1));
     }
 
     [Theory]
@@ -143,12 +144,32 @@ public class MyAggregateRepositoryTests : IDisposable
         // Arrange
         var id = MyAggregateId.CreateUnique();
 
-        var existingAggregate = new MyAggregate(id, 2, "Test", "Test", CreatedOn, CreatedOn);
+        var existingAggregateState = new MyAggregateState
+        {
+            Id = id,
+            Version = 2,
+            Name = "Test",
+            Description = "Test",
+            CreatedOn = CreatedOn,
+            UpdatedOn = UpdatedOn
+        };
+
+        var existingAggregate = new MyAggregate(existingAggregateState);
 
         await GivenRecordExists(existingAggregate);
 
         // reset version
-        var aggregate = new MyAggregate(id, 1, "Test", "Test", CreatedOn, CreatedOn);
+        var aggregateState = new MyAggregateState
+        {
+            Id = id,
+            Version = existingAggregateState.Version - 1,
+            Name = existingAggregateState.Name,
+            Description = existingAggregateState.Description,
+            CreatedOn = existingAggregateState.CreatedOn,
+            UpdatedOn = existingAggregateState.UpdatedOn
+        };
+
+        var aggregate = new MyAggregate(aggregateState);
         aggregate.Update(updatedName, updatedDescription, UpdatedOn);
 
         // Act
@@ -162,12 +183,12 @@ public class MyAggregateRepositoryTests : IDisposable
 
     private async Task GivenRecordExists(MyAggregate record)
     {
-        await _databaseHelper.AddRecordAsync(record.Id.Value, record);
+        await _databaseHelper.AddRecordAsync(record.Id.Value, record.State);
     }
 
-    private async Task<MyAggregate> ThenRecordExists(MyAggregateId id)
+    private async Task<MyAggregateState> ThenRecordExists(MyAggregateId id)
     {
-        var record = await _databaseHelper.GetRecordAsync<MyAggregate>(id.Value);
+        var record = await _databaseHelper.GetRecordAsync<MyAggregateState>(id.Value);
 
         return record;
     }      

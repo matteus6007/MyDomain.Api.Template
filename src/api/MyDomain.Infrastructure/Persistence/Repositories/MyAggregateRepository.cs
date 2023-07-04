@@ -7,6 +7,7 @@ using ErrorOr;
 using Microsoft.Extensions.Options;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
+using MyDomain.Domain;
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
@@ -34,12 +35,12 @@ public class MyAggregateRepository : IMyAggregateRepository
                             FROM MyAggregates
                             WHERE Id = @Id;";
 
-        var aggregate = await connection.QuerySingleOrDefaultAsync<MyAggregate?>(
+        var aggregateState = await connection.QuerySingleOrDefaultAsync<MyAggregateState>(
             sql,
             new { id = id.Value.ToString() },
             commandType: CommandType.Text);
 
-        return aggregate;
+        return aggregateState == null ? null : new MyAggregate(aggregateState);
     }
 
     public async Task<ErrorOr<Created>> AddAsync(MyAggregate data)
@@ -52,10 +53,10 @@ public class MyAggregateRepository : IMyAggregateRepository
         {
             Id = data.Id.Value,
             data.Version,
-            data.Name,
-            data.Description,
-            data.CreatedOn,
-            data.UpdatedOn
+            data.State.Name,
+            data.State.Description,
+            data.State.CreatedOn,
+            data.State.UpdatedOn
         };
 
         const string sql = @"INSERT INTO MyAggregates (Id,Version,Name,Description,CreatedOn,UpdatedOn)
@@ -83,10 +84,10 @@ public class MyAggregateRepository : IMyAggregateRepository
             Id = data.Id.Value,
             data.Version,
             data.PreviousVersion,
-            data.Name,
-            data.Description,
-            data.CreatedOn,
-            data.UpdatedOn
+            data.State.Name,
+            data.State.Description,
+            data.State.CreatedOn,
+            data.State.UpdatedOn
         };
 
         // TODO: Add version check
