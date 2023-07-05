@@ -7,6 +7,7 @@ using MyDomain.Api;
 using MyDomain.Api.Middleware;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
+using MyDomain.Infrastructure.Messaging;
 
 using Serilog;
 
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddPresentation();
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddMessaging(builder.Configuration);
     builder.Services
         .ConfigureHealthChecks(builder.Configuration)
         .AddInfrastructureHealthChecks(builder.Configuration);

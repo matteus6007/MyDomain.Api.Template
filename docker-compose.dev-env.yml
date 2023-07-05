@@ -31,6 +31,30 @@ services:
       FLYWAY_EDITION: community
       FLYWAY_CONFIG_FILES: /flyway/conf/application.conf
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
+  localstack:
+    image: localstack/localstack
+    networks:
+      - default
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    volumes:
+      - localstackdata:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - SERVICES=s3,sns,sqs,sts
+      - DEBUG=1
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOST_TMP_FOLDER=${TMPDIR}
+      - DEFAULT_REGION=eu-west-1
+      - HOSTNAME=localstack
+      - HOSTNAME_EXTERNAL=localstack
 
 volumes:
   localdbdata:
+  localstackdata:

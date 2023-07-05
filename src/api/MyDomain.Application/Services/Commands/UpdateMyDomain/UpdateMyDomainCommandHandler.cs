@@ -5,20 +5,24 @@ using MediatR;
 using MyDomain.Application.Common.Interfaces;
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Application.Common.Models;
+using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 
 namespace MyDomain.Application.Services.Commands.UpdateMyDomain;
 
 public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainCommand, ErrorOr<MyDomainResult>>
 {
-    private readonly IMyAggregateRepository _repository;
+    private readonly IReadRepository<MyAggregate, MyAggregateId> _readRepository;
+    private readonly IAggregatePersistenceService<MyAggregate, MyAggregateId> _persistenceService;
     private readonly IDateTimeProvider _dateTime;
 
     public UpdateMyDomainCommandHandler(
-        IMyAggregateRepository repository,
+        IReadRepository<MyAggregate, MyAggregateId> readRepository,
+        IAggregatePersistenceService<MyAggregate, MyAggregateId> persistenceService,
         IDateTimeProvider dateTime)
     {
-        _repository = repository;
+        _readRepository = readRepository;
+        _persistenceService = persistenceService;
         _dateTime = dateTime;
     }
 
@@ -26,7 +30,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
     {
         var id = MyAggregateId.Create(request.Id);
 
-        var aggregate = await _repository.GetByIdAsync(id);
+        var aggregate = await _readRepository.GetByIdAsync(id);
 
         if (aggregate is null)
         {
@@ -35,7 +39,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
         aggregate.Update(request.Name, request.Description, _dateTime.UtcNow);
 
-        ErrorOr<Updated> response = await _repository.UpdateAsync(aggregate);
+        ErrorOr<Success> response = await _persistenceService.PersistAsync(aggregate);
 
         if (response.IsError)
         {
@@ -44,10 +48,10 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
         var result = new MyDomainResult(
             aggregate.Id.Value,
-            aggregate.Name,
-            aggregate.Description,
-            aggregate.CreatedOn,
-            aggregate.UpdatedOn);
+            aggregate.State.Name,
+            aggregate.State.Description,
+            aggregate.State.CreatedOn,
+            aggregate.State.UpdatedOn);
 
         return result;        
     }

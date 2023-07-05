@@ -8,6 +8,9 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", "test");
+        Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", "test");
+
         // disable health check UI
         Environment.SetEnvironmentVariable("HealthChecksUI_Enabled", "false");
 

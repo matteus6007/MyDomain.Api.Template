@@ -6,7 +6,9 @@ using MyDomain.Domain.MyAggregate.ValueObjects;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class InMemoryMyAggregateRepository : IMyAggregateRepository
+public class InMemoryMyAggregateRepository :
+    IReadRepository<MyAggregate, MyAggregateId>,
+    IWriteRepository<MyAggregate, MyAggregateId>
 {
     private readonly List<MyAggregate> _items = new();
 
