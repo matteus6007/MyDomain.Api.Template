@@ -2,7 +2,7 @@ using MyDomain.Domain.Common.Interfaces;
 
 namespace MyDomain.Domain.Common.Models;
 
-public abstract class AggregateRoot<TState, TId> : Entity<TId>
+public abstract class AggregateRoot<TState, TId> : Entity<TId>, IAggregateRoot<TId>
     where TId : notnull
     where TState : IAggregateState<TId>
 {

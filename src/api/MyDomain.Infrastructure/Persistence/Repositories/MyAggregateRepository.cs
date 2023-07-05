@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain;
+using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Domain.MyAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
@@ -16,7 +17,9 @@ using MySql.Data.MySqlClient;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class MyAggregateRepository : IMyAggregateRepository
+public class MyAggregateRepository :
+    IReadRepository<MyAggregate, MyAggregateId>,
+    IWriteRepository<MyAggregate, MyAggregateId>
 {
     private readonly string _readConnectionString;
     private readonly string _writeConnectionString;

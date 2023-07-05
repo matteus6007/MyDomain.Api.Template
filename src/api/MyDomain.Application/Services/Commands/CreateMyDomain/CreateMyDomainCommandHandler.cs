@@ -6,19 +6,20 @@ using MyDomain.Application.Common.Interfaces;
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Application.Common.Models;
 using MyDomain.Domain.MyAggregate;
+using MyDomain.Domain.MyAggregate.ValueObjects;
 
 namespace MyDomain.Application.Services.Commands.CreateMyDomain;
 
 public class CreateMyDomainCommandHandler : IRequestHandler<CreateMyDomainCommand, ErrorOr<MyDomainResult>>
 {
-    private readonly IMyAggregateRepository _repository;
+    private readonly IAggregatePersistenceService<MyAggregate, MyAggregateId> _persistenceService;
     private readonly IDateTimeProvider _dateTime;
 
     public CreateMyDomainCommandHandler(
-        IMyAggregateRepository repository,
+        IAggregatePersistenceService<MyAggregate, MyAggregateId> persistenceService,
         IDateTimeProvider dateTime)
     {
-        _repository = repository;
+        _persistenceService = persistenceService;
         _dateTime = dateTime;
     }
 
@@ -26,7 +27,12 @@ public class CreateMyDomainCommandHandler : IRequestHandler<CreateMyDomainComman
     {
         var aggregate = MyAggregate.Create(request.Name, request.Description, _dateTime.UtcNow);
 
-        await _repository.AddAsync(aggregate);
+        ErrorOr<Success> response = await _persistenceService.PersistAsync(aggregate);
+
+        if (response.IsError)
+        {
+            return response.FirstError;
+        }        
 
         var result = new MyDomainResult(
             aggregate.Id.Value,

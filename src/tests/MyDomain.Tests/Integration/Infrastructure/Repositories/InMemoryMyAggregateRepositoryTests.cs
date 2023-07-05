@@ -2,7 +2,6 @@ using AutoFixture.Xunit2;
 
 using Shouldly;
 
-using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.MyAggregate;
 using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Domain.MyAggregate.ValueObjects;
@@ -12,7 +11,7 @@ namespace MyDomain.Tests.Integration.Repositories;
 
 public class InMemoryMyAggregateRepositoryTests
 {
-    private readonly IMyAggregateRepository _sut;
+    private readonly InMemoryMyAggregateRepository _sut;
 
     public InMemoryMyAggregateRepositoryTests()
     {

@@ -1,3 +1,4 @@
+using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Domain.Common.Models;
 using MyDomain.Domain.MyAggregate.Events;
 using MyDomain.Domain.MyAggregate.ValueObjects;
