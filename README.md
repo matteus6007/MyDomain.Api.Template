@@ -36,7 +36,10 @@ Example configuration in `appsettings.json`:
 ## Launch Environment
 
 * MySQL
-* Database migrations
+  * Database migrations using [Flyway](https://flywaydb.org/)
+* AWS resources
+  * [Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/custom-service-endpoints#localstack)
+  * [Localstack](https://github.com/localstack/localstack) 
 
 Start environment:
 

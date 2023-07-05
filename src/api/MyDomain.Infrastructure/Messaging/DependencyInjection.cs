@@ -16,9 +16,9 @@ public static class DependencyInjection
     {
         var snsOptions = configuration.GetSection(SnsOptions.SectionName).Get<SnsOptions>();
 
-        services.AddSingleton(x => snsOptions);
+        services.AddSingleton(snsOptions);
 
-        if (!string.IsNullOrWhiteSpace(snsOptions.ServiceUrlOverride))
+        if (!string.IsNullOrWhiteSpace(snsOptions?.ServiceUrlOverride))
         {
             var clientConfig = new AmazonSimpleNotificationServiceConfig
             {
