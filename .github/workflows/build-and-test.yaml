@@ -30,7 +30,7 @@ jobs:
     - name: Init Terraform (AWS)
       run: docker run --rm -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local init
     - name: Apply Terraform (AWS)
-      if: success() 
+      if: success()
       run: docker run --rm --network mydomain-api -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local apply -input=false -auto-approve
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
@@ -41,6 +41,7 @@ jobs:
         name: test-results
         path: "testresults/test-results.trx"
     - name: Destroy Terraform (AWS)
+      if: always()
       run: docker run --rm --network mydomain-api -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local destroy -input=false -auto-approve      
     - name: Teardown local test environment
       if: always()
