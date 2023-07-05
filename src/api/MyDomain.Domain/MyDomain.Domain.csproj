@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Common\Interfaces\" />
+    <Folder Include="Common\Models\Messaging\" />
   </ItemGroup>
 
 </Project>
