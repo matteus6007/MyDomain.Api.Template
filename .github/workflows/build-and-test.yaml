@@ -24,7 +24,9 @@ jobs:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
       run: echo "$GITHUB_CONTEXT"
     - name: Linting files
-      run: git diff-tree --no-commit-id --name-only -r ${{ github.event.workflow_run.head_sha }} HEAD
+      run: |
+        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD)
+        echo $FILES_CHANGED
     # - name: Linting
     #   run: |
     #     FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
