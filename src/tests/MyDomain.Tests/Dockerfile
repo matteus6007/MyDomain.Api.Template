@@ -15,4 +15,4 @@ FROM build AS test
 WORKDIR /src/tests
 COPY ./src/tests/ .
 
-ENTRYPOINT ["dotnet", "test", "--logger:\"trx;LogFilePath=./TestResults/test-results.trx;MethodFormat=Class;FailureBodyFormat=Verbose\"", "--configuration:release", "/p:CollectCoverage=true", "/p:CoverletOutputFormat=cobertura", "/p:CoverletOutput=./TestResults/", "MyDomain.Tests/MyDomain.Tests.csproj"]
+ENTRYPOINT ["dotnet", "test", "--logger:\"trx;LogFilePath=./TestResults/test-results.trx;MethodFormat=Class;FailureBodyFormat=Verbose\"", "--configuration:release", "--collect:\"XPlat Code Coverage;Format=opencover\"", "MyDomain.Tests/MyDomain.Tests.csproj"]
