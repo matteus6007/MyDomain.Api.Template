@@ -11,6 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
@@ -19,6 +21,10 @@ jobs:
       run: dotnet restore $SOURCE_DIRECTORY
     - name: Build
       run: dotnet build $SOURCE_DIRECTORY
+    - name: Linting
+      run: |
+        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
+        dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
 
   test:
     runs-on: ubuntu-latest
