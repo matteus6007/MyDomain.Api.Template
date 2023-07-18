@@ -20,7 +20,7 @@ jobs:
     - name: Build
       run: dotnet build $SOURCE_DIRECTORY
     - name: Linting files
-      run: git diff-tree --no-commit-id --name-only -r HEAD
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }} HEAD
     # - name: Linting
     #   run: |
     #     FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
