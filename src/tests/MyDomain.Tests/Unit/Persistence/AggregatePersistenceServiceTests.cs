@@ -25,7 +25,7 @@ public class AggregatePersistenceServiceTests
     public AggregatePersistenceServiceTests()
     {
         _sut = new AggregatePersistenceService<MyAggregate, MyAggregateId>(
-            _eventPublisherMock.Object, 
+            _eventPublisherMock.Object,
             _repositoryMock.Object);
     }
 
@@ -100,7 +100,7 @@ public class AggregatePersistenceServiceTests
     {
         _eventPublisherMock
             .Verify(x => x.PublishAsync(It.Is<IDomainEvent>(y => y.GetType() == typeof(MyAggregateCreated))));
-    }    
+    }
 
     private void ThenRecordShouldBeUpdated(MyAggregate aggregate)
     {
@@ -112,5 +112,5 @@ public class AggregatePersistenceServiceTests
     {
         _eventPublisherMock
             .Verify(x => x.PublishAsync(It.Is<IDomainEvent>(y => y.GetType() == typeof(MyAggregateUpdated))));
-    }      
+    }
 }

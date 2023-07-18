@@ -44,7 +44,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
         if (response.IsError)
         {
             return response.FirstError;
-        }        
+        }
 
         var result = new MyDomainResult(
             aggregate.Id.Value,
@@ -53,6 +53,6 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
             aggregate.State.CreatedOn,
             aggregate.State.UpdatedOn);
 
-        return result;        
+        return result;
     }
 }

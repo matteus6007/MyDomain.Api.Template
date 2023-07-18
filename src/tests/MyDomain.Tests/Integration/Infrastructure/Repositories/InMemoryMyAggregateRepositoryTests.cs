@@ -1,11 +1,12 @@
 using AutoFixture.Xunit2;
 
-using Shouldly;
+using ErrorOr;
 
 using MyDomain.Domain.MyAggregate;
-using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Domain.MyAggregate.ValueObjects;
-using ErrorOr;
+using MyDomain.Infrastructure.Persistence.Repositories;
+
+using Shouldly;
 
 namespace MyDomain.Tests.Integration.Repositories;
 

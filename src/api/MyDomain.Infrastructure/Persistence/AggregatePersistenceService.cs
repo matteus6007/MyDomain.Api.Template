@@ -58,5 +58,5 @@ public class AggregatePersistenceService<TAggregate, TId> : IAggregatePersistenc
     private async Task PublishEventsAsync(TAggregate aggregate)
     {
         await Task.WhenAll(aggregate.DomainEvents.Select(_eventPublisher.PublishAsync));
-    }    
+    }
 }

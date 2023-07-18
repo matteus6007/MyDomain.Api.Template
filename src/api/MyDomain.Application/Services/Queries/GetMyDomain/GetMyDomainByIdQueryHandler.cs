@@ -33,6 +33,6 @@ public class GetMyDomainByIdQueryHandler : IRequestHandler<GetMyDomainByIdQuery,
             model.CreatedOn,
             model.UpdatedOn);
 
-        return result;        
+        return result;
     }
 }
