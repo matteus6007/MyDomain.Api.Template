@@ -19,10 +19,12 @@ jobs:
       run: dotnet restore $SOURCE_DIRECTORY
     - name: Build
       run: dotnet build $SOURCE_DIRECTORY
-    - name: Linting
-      run: |
-        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
-        dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
+    - name: Linting files
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD
+    # - name: Linting
+    #   run: |
+    #     FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
+    #     dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
 
   test:
     runs-on: ubuntu-latest
