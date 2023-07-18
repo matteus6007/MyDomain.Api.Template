@@ -34,6 +34,10 @@ jobs:
       run: docker run --rm --network mydomain-api -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local apply -input=false -auto-approve
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
+    - name: Code Coverage
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     - name: Upload Test Results
       if: always()
       uses: actions/upload-artifact@v3
