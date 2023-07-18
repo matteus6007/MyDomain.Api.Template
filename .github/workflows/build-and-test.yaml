@@ -19,8 +19,12 @@ jobs:
       run: dotnet restore $SOURCE_DIRECTORY
     - name: Build
       run: dotnet build $SOURCE_DIRECTORY
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: echo "$GITHUB_CONTEXT"
     - name: Linting files
-      run: git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }} HEAD
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.event.workflow_run.head_sha }} HEAD
     # - name: Linting
     #   run: |
     #     FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
