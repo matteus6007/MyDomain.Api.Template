@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        fetch-depth: 1
+        fetch-depth: 2
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
@@ -23,7 +23,7 @@ jobs:
       run: dotnet build $SOURCE_DIRECTORY
     - name: Linting files
       run: |
-        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
         echo $FILES_CHANGED
     # - name: Linting
     #   run: |
