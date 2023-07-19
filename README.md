@@ -82,7 +82,7 @@ _Note: requires local test environment._
 
 `docker-compose -f docker-compose.test.yml up --build`
 
-### Code Coverage
+## Code Coverage
 
 Managed using [Codecov](https://about.codecov.io/).
 
