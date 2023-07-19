@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 using System.Data;
 
 using Dapper;
@@ -7,6 +5,8 @@ using Dapper;
 using MyDomain.Infrastructure.Persistence.Options;
 
 using MySql.Data.MySqlClient;
+
+using Newtonsoft.Json;
 
 namespace MyDomain.Tests.Integration.Infrastructure;
 
@@ -48,7 +48,7 @@ public class DatabaseHelper<TId, TRecord> where TRecord : class
     public void TrackId(TId id)
     {
         AddedRecords.Add(id);
-    }    
+    }
 
     public async Task<T> GetRecordAsync<T>(TId id)
     {
@@ -92,7 +92,7 @@ public class DatabaseHelper<TId, TRecord> where TRecord : class
     {
         using var connection = new MySqlConnection(_writeConnectionString);
         await connection.ExecuteAsync($"DELETE FROM {_tableName} where {_idColumnName} = @id", new { id });
-    }      
+    }
 
     private static DynamicParameters? ToDynamicParameters<T>(T record)
     {

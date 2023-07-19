@@ -24,7 +24,7 @@ public class MyDomainQueryExecutor : IQueryExecutor<MyDomainReadModel, Guid>
     public async Task<MyDomainReadModel?> GetByIdAsync(Guid id)
     {
         using var connection = new MySqlConnection(_readConnectionString);
-        
+
         const string sql = @"SELECT Id,Name,Description,CreatedOn,UpdatedOn
                             FROM MyAggregates
                             WHERE Id = @Id;";

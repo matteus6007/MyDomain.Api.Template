@@ -33,5 +33,5 @@ public static class HealthChecks
             tags: new[] { databaseOptions.Server });
 
         return healthChecksBuilder;
-    }    
+    }
 }

@@ -16,12 +16,12 @@ public abstract class ValueObject : IEquatable<ValueObject>
         return GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
     }
 
-    public static bool operator ==(ValueObject left,ValueObject right)
+    public static bool operator ==(ValueObject left, ValueObject right)
     {
         return Equals(left, right);
     }
 
-    public static bool operator !=(ValueObject left,ValueObject right)
+    public static bool operator !=(ValueObject left, ValueObject right)
     {
         return !Equals(left, right);
     }
@@ -32,5 +32,5 @@ public abstract class ValueObject : IEquatable<ValueObject>
             .Aggregate((x, y) => x ^ y);
     }
 
-    public bool Equals(ValueObject? other) => Equals((object?) other);
+    public bool Equals(ValueObject? other) => Equals((object?)other);
 }

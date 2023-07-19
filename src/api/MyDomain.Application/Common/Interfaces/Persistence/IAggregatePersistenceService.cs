@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+
 using MyDomain.Domain.Common.Interfaces;
 
 namespace MyDomain.Application.Common.Interfaces.Persistence;

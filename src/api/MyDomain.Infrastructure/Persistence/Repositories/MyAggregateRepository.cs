@@ -133,5 +133,5 @@ public class MyAggregateRepository :
             commandType: CommandType.Text);
 
         return currentVersion;
-    }    
+    }
 }

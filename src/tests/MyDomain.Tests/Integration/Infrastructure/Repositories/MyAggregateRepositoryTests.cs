@@ -91,7 +91,7 @@ public class MyAggregateRepositoryTests : IDisposable
     public async Task UpdateAsync_WhenRecordExists_ThenRecordShouldBeSavedSuccessfully(
         MyAggregate aggregate,
         string updatedName,
-        string updatedDescription) 
+        string updatedDescription)
     {
         // Arrange
         var expectedVersion = aggregate.Version + 1;
@@ -191,5 +191,5 @@ public class MyAggregateRepositoryTests : IDisposable
         var record = await _databaseHelper.GetRecordAsync<MyAggregateState>(id.Value);
 
         return record;
-    }      
+    }
 }

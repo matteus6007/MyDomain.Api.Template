@@ -43,5 +43,5 @@ public class ApiController : ControllerBase
         };
 
         return Problem(statusCode: statusCode, title: firstError.Description);
-    }    
+    }
 }

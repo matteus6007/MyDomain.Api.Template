@@ -12,17 +12,17 @@ public static class DependencyInjection
     {
         services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
         services.AddFluentValidationAutoValidation();
-        services.AddValidatorsFromAssemblyContaining<Program>();        
+        services.AddValidatorsFromAssemblyContaining<Program>();
         services.AddMappings();
         services.AddProblemDetails();
         services.ConfigureOptions<AssemblyOptionsProvider>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        var defaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
+        var defaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddApiVersioning(opt => 
+        services.AddApiVersioning(opt =>
         {
             opt.DefaultApiVersion = defaultApiVersion;
             opt.AssumeDefaultVersionWhenUnspecified = true;

@@ -32,7 +32,7 @@ public class CreateMyDomainCommandHandler : IRequestHandler<CreateMyDomainComman
         if (response.IsError)
         {
             return response.FirstError;
-        }        
+        }
 
         var result = new MyDomainResult(
             aggregate.Id.Value,
