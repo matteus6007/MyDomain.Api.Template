@@ -1,4 +1,7 @@
 # MyDomain.Api.Template
+
+[![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template)
+
 Boilerplate template for creating a new API
 
 ## Linting
@@ -78,3 +81,9 @@ _Note: requires local test environment._
 ### Docker
 
 `docker-compose -f docker-compose.test.yml up --build`
+
+### Code Coverage
+
+Managed using [Codecov](https://about.codecov.io/).
+
+To set up the repository you need to create a token `CODECOV_TOKEN` and enable app integration - see https://docs.codecov.com/docs/github-2-getting-a-codecov-account-and-uploading-coverage.
