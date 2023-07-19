@@ -5,4 +5,5 @@ coverage:
         # basic settings
         target: auto
         threshold: 5%
-        base: auto        
+        base: auto
+    patch: off
