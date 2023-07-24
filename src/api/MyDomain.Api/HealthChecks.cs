@@ -12,9 +12,11 @@ public static class HealthChecks
             {
                 var healthCheckEndpoint = "http://localhost/healthcheck/tests";
 
+                //-:cnd:noEmit
 #if DEBUG
                 healthCheckEndpoint = "/healthcheck/tests";
 #endif
+                //+:cnd:noEmit
 
                 setup.AddHealthCheckEndpoint("API", healthCheckEndpoint);
                 setup.SetEvaluationTimeInSeconds(60);

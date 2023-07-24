@@ -2,8 +2,6 @@
 
 [![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template)
 
-Boilerplate template for creating a new API
-
 ## Linting
 
 Performed on `pre-commit` using [Husky.Net](https://alirezanet.github.io/Husky.Net/).
