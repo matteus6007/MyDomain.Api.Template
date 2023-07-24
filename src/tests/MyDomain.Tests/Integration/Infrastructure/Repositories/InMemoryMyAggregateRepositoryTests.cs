@@ -2,8 +2,8 @@ using AutoFixture.Xunit2;
 
 using ErrorOr;
 
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Repositories;
 
 using Shouldly;
@@ -38,7 +38,7 @@ public class InMemoryMyAggregateRepositoryTests
     [Theory]
     [AutoData]
     public async Task GetByIdAsync_WhenRecordDoesNotExist_ThenShouldReturnNull(
-        MyAggregateId id)
+        MyDomainId id)
     {
         // Act
         var result = await _sut.GetByIdAsync(id);
@@ -50,7 +50,7 @@ public class InMemoryMyAggregateRepositoryTests
     [Theory]
     [AutoData]
     public async Task Update_WhenRecordExists_ThenShouldBeUpdated(
-        MyAggregate existingAggregate,
+        Domain.MyDomainAggregate.MyDomainAggregate existingAggregate,
         string updatedName,
         string updatedDescription)
     {
@@ -76,16 +76,16 @@ public class InMemoryMyAggregateRepositoryTests
         record.State.Description.ShouldBe(updatedDescription);
     }
 
-    private async Task<MyAggregate> GivenRecordExists(string name, string description)
+    private async Task<Domain.MyDomainAggregate.MyDomainAggregate> GivenRecordExists(string name, string description)
     {
-        var aggregate = MyAggregate.Create(name, description, DateTime.UtcNow);
+        var aggregate = Domain.MyDomainAggregate.MyDomainAggregate.Create(name, description, DateTime.UtcNow);
 
         await GivenRecordExists(aggregate);
 
         return aggregate;
     }
 
-    private async Task GivenRecordExists(MyAggregate aggregate)
+    private async Task GivenRecordExists(Domain.MyDomainAggregate.MyDomainAggregate aggregate)
     {
         await _sut.AddAsync(aggregate);
     }

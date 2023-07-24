@@ -1,13 +1,13 @@
 ﻿using AutoFixture.Xunit2;
 
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.Events;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.Events;
 
 using Shouldly;
 
 namespace MyDomain.Tests;
 
-public class MyAggregateTests
+public class MyDomainAggregateTests
 {
     [Theory]
     [AutoData]
@@ -17,7 +17,7 @@ public class MyAggregateTests
         DateTime createdOn)
     {
         // Act
-        var aggregate = MyAggregate.Create(name, description, createdOn);
+        var aggregate = MyDomainAggregate.Create(name, description, createdOn);
 
         // Assert
         aggregate.ShouldNotBeNull();
@@ -28,13 +28,13 @@ public class MyAggregateTests
         aggregate.State.Description.ShouldBe(description);
         aggregate.State.CreatedOn.ShouldBe(createdOn);
         aggregate.DomainEvents.Count.ShouldBe(1);
-        aggregate.DomainEvents[0].ShouldBeOfType<MyAggregateCreated>();
+        aggregate.DomainEvents[0].ShouldBeOfType<MyDomainCreated>();
     }
 
     [Theory]
     [AutoData]
     public void GivenAggregateExists_WhenIUpdateAggregate_ThenAggregateShouldBeUpdatedSuccessfully(
-        MyAggregate aggregate,
+        MyDomainAggregate aggregate,
         string name,
         string description,
         DateTime updatedOn)
@@ -52,6 +52,6 @@ public class MyAggregateTests
         aggregate.State.Description.ShouldBe(description);
         aggregate.State.UpdatedOn.ShouldBe(updatedOn);
         aggregate.DomainEvents.Count.ShouldBe(1);
-        aggregate.DomainEvents[0].ShouldBeOfType<MyAggregateUpdated>();
+        aggregate.DomainEvents[0].ShouldBeOfType<MyDomainUpdated>();
     }
 }

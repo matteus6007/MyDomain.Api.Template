@@ -2,11 +2,11 @@ using System.Data;
 
 using Dapper;
 
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyAggregateId>
+public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyDomainId>
 {
     private static bool _initialised;
 
@@ -17,20 +17,20 @@ public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyAggregateId>
             return;
         }
 
-        SqlMapper.AddTypeHandler(typeof(MyAggregateId), new MyAggregateIdTypeHandler());
+        SqlMapper.AddTypeHandler(typeof(MyDomainId), new MyAggregateIdTypeHandler());
 
         _initialised = true;
     }
 
-    public override void SetValue(IDbDataParameter parameter, MyAggregateId value)
+    public override void SetValue(IDbDataParameter parameter, MyDomainId value)
     {
         parameter.Value = value?.ToString();
     }
 
-    public override MyAggregateId Parse(object value)
+    public override MyDomainId Parse(object value)
     {
         var myAggregateId = value?.ToString();
 
-        return MyAggregateId.Create(new Guid(myAggregateId));
+        return MyDomainId.Create(new Guid(myAggregateId));
     }
 }

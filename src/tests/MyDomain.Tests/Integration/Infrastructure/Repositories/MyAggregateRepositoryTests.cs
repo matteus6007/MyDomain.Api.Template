@@ -6,9 +6,8 @@ using Microsoft.Extensions.Options;
 
 using Moq;
 
-using MyDomain.Domain;
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
 using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Tests.Integration.Infrastructure;
@@ -21,12 +20,12 @@ public class MyAggregateRepositoryTests : IDisposable
 {
     private static readonly DateTime CreatedOn = new(2013, 1, 1);
     private static readonly DateTime UpdatedOn = new(2013, 1, 2);
-    private readonly DatabaseHelper<Guid, MyAggregateState> _databaseHelper;
+    private readonly DatabaseHelper<Guid, MyDomainState> _databaseHelper;
     private readonly MyAggregateRepository _sut;
 
     public MyAggregateRepositoryTests()
     {
-        _databaseHelper = new DatabaseHelper<Guid, MyAggregateState>("MyAggregates", "Id");
+        _databaseHelper = new DatabaseHelper<Guid, MyDomainState>("MyAggregates", "Id");
 
         var options = new Mock<IOptionsSnapshot<DatabaseOptions>>();
         options.Setup(_ => _.Value).Returns(_databaseHelper.Options);
@@ -41,7 +40,7 @@ public class MyAggregateRepositoryTests : IDisposable
     [Theory]
     [AutoData]
     public async Task GetByIdAsync_WhenRecordExists_ThenShouldReturnRecord(
-        MyAggregate aggregate)
+        MyDomainAggregate aggregate)
     {
         // Arrange
         await GivenRecordExists(aggregate);
@@ -65,7 +64,7 @@ public class MyAggregateRepositoryTests : IDisposable
         string description)
     {
         // Arrange
-        var aggregate = MyAggregate.Create(name, description, CreatedOn);
+        var aggregate = MyDomainAggregate.Create(name, description, CreatedOn);
 
         // Act
         ErrorOr<Created> result = await _sut.AddAsync(aggregate);
@@ -89,7 +88,7 @@ public class MyAggregateRepositoryTests : IDisposable
     [Theory]
     [AutoData]
     public async Task UpdateAsync_WhenRecordExists_ThenRecordShouldBeSavedSuccessfully(
-        MyAggregate aggregate,
+        MyDomainAggregate aggregate,
         string updatedName,
         string updatedDescription)
     {
@@ -120,7 +119,7 @@ public class MyAggregateRepositoryTests : IDisposable
     [Theory]
     [AutoData]
     public async Task UpdateAsync_WhenRecordDoesNotExist_ThenShouldThrowException(
-        MyAggregate aggregate,
+        Domain.MyDomainAggregate.MyDomainAggregate aggregate,
         string updatedName,
         string updatedDescription)
     {
@@ -142,9 +141,9 @@ public class MyAggregateRepositoryTests : IDisposable
         string updatedDescription)
     {
         // Arrange
-        var id = MyAggregateId.CreateUnique();
+        var id = MyDomainId.CreateUnique();
 
-        var existingAggregateState = new MyAggregateState
+        var existingAggregateState = new MyDomainState
         {
             Id = id,
             Version = 2,
@@ -154,12 +153,12 @@ public class MyAggregateRepositoryTests : IDisposable
             UpdatedOn = UpdatedOn
         };
 
-        var existingAggregate = new MyAggregate(existingAggregateState);
+        var existingAggregate = new MyDomainAggregate(existingAggregateState);
 
         await GivenRecordExists(existingAggregate);
 
         // reset version
-        var aggregateState = new MyAggregateState
+        var aggregateState = new MyDomainState
         {
             Id = id,
             Version = existingAggregateState.Version - 1,
@@ -169,7 +168,7 @@ public class MyAggregateRepositoryTests : IDisposable
             UpdatedOn = existingAggregateState.UpdatedOn
         };
 
-        var aggregate = new MyAggregate(aggregateState);
+        var aggregate = new MyDomainAggregate(aggregateState);
         aggregate.Update(updatedName, updatedDescription, UpdatedOn);
 
         // Act
@@ -181,14 +180,14 @@ public class MyAggregateRepositoryTests : IDisposable
         result.FirstError.Description.ShouldContain("version is out of date");
     }
 
-    private async Task GivenRecordExists(MyAggregate record)
+    private async Task GivenRecordExists(MyDomainAggregate record)
     {
         await _databaseHelper.AddRecordAsync(record.Id.Value, record.State);
     }
 
-    private async Task<MyAggregateState> ThenRecordExists(MyAggregateId id)
+    private async Task<MyDomainState> ThenRecordExists(MyDomainId id)
     {
-        var record = await _databaseHelper.GetRecordAsync<MyAggregateState>(id.Value);
+        var record = await _databaseHelper.GetRecordAsync<MyDomainState>(id.Value);
 
         return record;
     }

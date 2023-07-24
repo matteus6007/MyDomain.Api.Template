@@ -7,10 +7,9 @@ using ErrorOr;
 using Microsoft.Extensions.Options;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
-using MyDomain.Domain;
 using MyDomain.Domain.Common.Interfaces;
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
 
 using MySql.Data.MySqlClient;
@@ -18,8 +17,8 @@ using MySql.Data.MySqlClient;
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
 public class MyAggregateRepository :
-    IReadRepository<MyAggregate, MyAggregateId>,
-    IWriteRepository<MyAggregate, MyAggregateId>
+    IReadRepository<MyDomainAggregate, MyDomainId>,
+    IWriteRepository<MyDomainAggregate, MyDomainId>
 {
     private readonly string _readConnectionString;
     private readonly string _writeConnectionString;
@@ -30,7 +29,7 @@ public class MyAggregateRepository :
         _writeConnectionString = options.Value.WriteConnectionString();
     }
 
-    public async Task<MyAggregate?> GetByIdAsync(MyAggregateId id)
+    public async Task<Domain.MyDomainAggregate.MyDomainAggregate?> GetByIdAsync(MyDomainId id)
     {
         using var connection = new MySqlConnection(_readConnectionString);
 
@@ -38,15 +37,15 @@ public class MyAggregateRepository :
                             FROM MyAggregates
                             WHERE Id = @Id;";
 
-        var aggregateState = await connection.QuerySingleOrDefaultAsync<MyAggregateState>(
+        var aggregateState = await connection.QuerySingleOrDefaultAsync<MyDomainState>(
             sql,
             new { id = id.Value.ToString() },
             commandType: CommandType.Text);
 
-        return aggregateState == null ? null : new MyAggregate(aggregateState);
+        return aggregateState == null ? null : new MyDomainAggregate(aggregateState);
     }
 
-    public async Task<ErrorOr<Created>> AddAsync(MyAggregate data)
+    public async Task<ErrorOr<Created>> AddAsync(MyDomainAggregate data)
     {
         using var connection = new MySqlConnection(_writeConnectionString);
         await connection.OpenAsync();
@@ -76,7 +75,7 @@ public class MyAggregateRepository :
         return Result.Created;
     }
 
-    public async Task<ErrorOr<Updated>> UpdateAsync(MyAggregate data)
+    public async Task<ErrorOr<Updated>> UpdateAsync(MyDomainAggregate data)
     {
         using var connection = new MySqlConnection(_writeConnectionString);
         await connection.OpenAsync();
