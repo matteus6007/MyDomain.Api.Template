@@ -1,0 +1,143 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Matt Jones",
+    "classifications": [
+        "Web",
+        "MVC"
+    ],
+    "name": "Domain Template API",
+    "identity": "MyDomain.Api.Template",
+    "shortName": "mydomainapi",
+    "tags": {
+        "language": "C#",
+        "type": "project"
+    },
+    "sourceName": "MyDomain",
+    "preferNameDirectory": true,
+    "symbols": {
+        "DatabasePort": {
+            "type": "generated",
+            "generator": "port",
+            "parameters": {
+                "fallback": 30001
+            },
+            "replaces": "30000"
+        },
+        "DatabaseSchema": {
+            "type": "parameter",
+            "dataType": "string",
+            "replaces": "DbSchema",
+            "fileRename": "DbSchema"
+        },
+        "Template": {
+            "type": "generated",
+            "dataType": "string",
+            "generator": "constant",
+            "parameters": {
+                "value": ""
+            },
+            "replaces": ".Template"
+        }
+    },
+    "sources": [
+        {
+            "exclude": [
+                "**/[Bb]in/**",
+                "**/[Oo]bj/**",
+                "**/.vs/**",
+                "**/.terraform/**",
+                "**/.terraform.lock.hcl",
+                "**/terraform.tfstate",
+                ".git/**",
+                ".template.config/**",
+                ".terraform/**",
+                ".terraform.lock.hcl",
+                "terraform.tfstate",
+                "testresults/**",
+                "Template.md"
+            ]
+        }
+    ],
+    "SpecialCustomOperations": {
+        "**/*.yml": {
+            "operations": [
+                {
+                    "type": "conditional",
+                    "configuration": {
+                        "actionableIf": [
+                            "#if"
+                        ],
+                        "actionableElse": [
+                            "#else"
+                        ],
+                        "actionableElseif": [
+                            "#elseif"
+                        ],
+                        "endif": [
+                            "#endif"
+                        ],
+                        "trim": "true",
+                        "wholeLine": "true"
+                    }
+                }
+            ]
+        },
+        "*.sln": {
+            "operations": [
+                {
+                    "type": "conditional",
+                    "configuration": {
+                        "style": "line",
+                        "token": "#"
+                    }
+                }
+            ]
+        },
+        "**/*.md": {
+            "operations": [
+                {
+                    "type": "conditional",
+                    "configuration": {
+                        "actionableIf": [
+                            "<!--#if"
+                        ],
+                        "actionableElse": [
+                            "<!--#else"
+                        ],
+                        "actionableElseif": [
+                            "<!--#elseif"
+                        ],
+                        "endif": [
+                            "<!--#endif"
+                        ],
+                        "trim": "true",
+                        "wholeLine": "true"
+                    }
+                }
+            ]
+        },
+        "**/*.csproj": {
+            "operations": [
+                {
+                    "type": "conditional",
+                    "configuration": {
+                        "actionableIf": [
+                            "<!--#if"
+                        ],
+                        "actionableElse": [
+                            "<!--#else"
+                        ],
+                        "actionableElseif": [
+                            "<!--#elseif"
+                        ],
+                        "endif": [
+                            "<!--#endif"
+                        ],
+                        "trim": "true",
+                        "wholeLine": "true"
+                    }
+                }
+            ]
+        }
+    }
+}
