@@ -10,13 +10,13 @@ using Shouldly;
 
 namespace MyDomain.Tests.Integration.Repositories;
 
-public class InMemoryMyAggregateRepositoryTests
+public class InMemoryMyDomainAggregateRepositoryTests
 {
-    private readonly InMemoryMyAggregateRepository _sut;
+    private readonly InMemoryMyDomainAggregateRepository _sut;
 
-    public InMemoryMyAggregateRepositoryTests()
+    public InMemoryMyDomainAggregateRepositoryTests()
     {
-        _sut = new InMemoryMyAggregateRepository();
+        _sut = new InMemoryMyDomainAggregateRepository();
     }
 
     [Theory]
@@ -50,7 +50,7 @@ public class InMemoryMyAggregateRepositoryTests
     [Theory]
     [AutoData]
     public async Task Update_WhenRecordExists_ThenShouldBeUpdated(
-        Domain.MyDomainAggregate.MyDomainAggregate existingAggregate,
+        MyDomainAggregate existingAggregate,
         string updatedName,
         string updatedDescription)
     {
@@ -76,16 +76,16 @@ public class InMemoryMyAggregateRepositoryTests
         record.State.Description.ShouldBe(updatedDescription);
     }
 
-    private async Task<Domain.MyDomainAggregate.MyDomainAggregate> GivenRecordExists(string name, string description)
+    private async Task<MyDomainAggregate> GivenRecordExists(string name, string description)
     {
-        var aggregate = Domain.MyDomainAggregate.MyDomainAggregate.Create(name, description, DateTime.UtcNow);
+        var aggregate = MyDomainAggregate.Create(name, description, DateTime.UtcNow);
 
         await GivenRecordExists(aggregate);
 
         return aggregate;
     }
 
-    private async Task GivenRecordExists(Domain.MyDomainAggregate.MyDomainAggregate aggregate)
+    private async Task GivenRecordExists(MyDomainAggregate aggregate)
     {
         await _sut.AddAsync(aggregate);
     }

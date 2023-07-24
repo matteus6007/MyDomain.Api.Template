@@ -16,23 +16,23 @@ using Shouldly;
 
 namespace MyDomain.Tests.Integration.Repositories;
 
-public class MyAggregateRepositoryTests : IDisposable
+public class MyDomainAggregateRepositoryTests : IDisposable
 {
     private static readonly DateTime CreatedOn = new(2013, 1, 1);
     private static readonly DateTime UpdatedOn = new(2013, 1, 2);
     private readonly DatabaseHelper<Guid, MyDomainState> _databaseHelper;
-    private readonly MyAggregateRepository _sut;
+    private readonly MyDomainAggregateRepository _sut;
 
-    public MyAggregateRepositoryTests()
+    public MyDomainAggregateRepositoryTests()
     {
         _databaseHelper = new DatabaseHelper<Guid, MyDomainState>("MyAggregates", "Id");
 
         var options = new Mock<IOptionsSnapshot<DatabaseOptions>>();
         options.Setup(_ => _.Value).Returns(_databaseHelper.Options);
 
-        MyAggregateIdTypeHandler.AddTypeHandlers();
+        MyDomainIdTypeHandler.AddTypeHandlers();
 
-        _sut = new MyAggregateRepository(options.Object);
+        _sut = new MyDomainAggregateRepository(options.Object);
     }
 
     public void Dispose() => _databaseHelper.CleanTableAsync().GetAwaiter().GetResult();
@@ -119,7 +119,7 @@ public class MyAggregateRepositoryTests : IDisposable
     [Theory]
     [AutoData]
     public async Task UpdateAsync_WhenRecordDoesNotExist_ThenShouldThrowException(
-        Domain.MyDomainAggregate.MyDomainAggregate aggregate,
+        MyDomainAggregate aggregate,
         string updatedName,
         string updatedDescription)
     {

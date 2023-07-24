@@ -16,20 +16,20 @@ using MySql.Data.MySqlClient;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class MyAggregateRepository :
+public class MyDomainAggregateRepository :
     IReadRepository<MyDomainAggregate, MyDomainId>,
     IWriteRepository<MyDomainAggregate, MyDomainId>
 {
     private readonly string _readConnectionString;
     private readonly string _writeConnectionString;
 
-    public MyAggregateRepository(IOptionsSnapshot<DatabaseOptions> options)
+    public MyDomainAggregateRepository(IOptionsSnapshot<DatabaseOptions> options)
     {
         _readConnectionString = options.Value.ReadConnectionString();
         _writeConnectionString = options.Value.WriteConnectionString();
     }
 
-    public async Task<Domain.MyDomainAggregate.MyDomainAggregate?> GetByIdAsync(MyDomainId id)
+    public async Task<MyDomainAggregate?> GetByIdAsync(MyDomainId id)
     {
         using var connection = new MySqlConnection(_readConnectionString);
 

@@ -6,7 +6,7 @@ using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyDomainId>
+public class MyDomainIdTypeHandler : SqlMapper.TypeHandler<MyDomainId>
 {
     private static bool _initialised;
 
@@ -17,7 +17,7 @@ public class MyAggregateIdTypeHandler : SqlMapper.TypeHandler<MyDomainId>
             return;
         }
 
-        SqlMapper.AddTypeHandler(typeof(MyDomainId), new MyAggregateIdTypeHandler());
+        SqlMapper.AddTypeHandler(typeof(MyDomainId), new MyDomainIdTypeHandler());
 
         _initialised = true;
     }
