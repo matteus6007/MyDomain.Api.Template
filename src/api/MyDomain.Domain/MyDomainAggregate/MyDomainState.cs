@@ -1,11 +1,11 @@
 ﻿using MyDomain.Domain.Common.Interfaces;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
-namespace MyDomain.Domain;
+namespace MyDomain.Domain.MyDomainAggregate;
 
-public class MyAggregateState : IAggregateState<MyAggregateId>
+public class MyDomainState : IAggregateState<MyDomainId>
 {
-    public required MyAggregateId Id { get; set; }
+    public required MyDomainId Id { get; set; }
     public int Version { get; set; }
     public required DateTime CreatedOn { get; set; }
     public required DateTime UpdatedOn { get; set; }

@@ -5,20 +5,20 @@ using MediatR;
 using MyDomain.Application.Common.Interfaces;
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Application.Common.Models;
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
 namespace MyDomain.Application.Services.Commands.UpdateMyDomain;
 
 public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainCommand, ErrorOr<MyDomainResult>>
 {
-    private readonly IReadRepository<MyAggregate, MyAggregateId> _readRepository;
-    private readonly IAggregatePersistenceService<MyAggregate, MyAggregateId> _persistenceService;
+    private readonly IReadRepository<Domain.MyDomainAggregate.MyDomainAggregate, MyDomainId> _readRepository;
+    private readonly IAggregatePersistenceService<Domain.MyDomainAggregate.MyDomainAggregate, MyDomainId> _persistenceService;
     private readonly IDateTimeProvider _dateTime;
 
     public UpdateMyDomainCommandHandler(
-        IReadRepository<MyAggregate, MyAggregateId> readRepository,
-        IAggregatePersistenceService<MyAggregate, MyAggregateId> persistenceService,
+        IReadRepository<Domain.MyDomainAggregate.MyDomainAggregate, MyDomainId> readRepository,
+        IAggregatePersistenceService<Domain.MyDomainAggregate.MyDomainAggregate, MyDomainId> persistenceService,
         IDateTimeProvider dateTime)
     {
         _readRepository = readRepository;
@@ -28,7 +28,7 @@ public class UpdateMyDomainCommandHandler : IRequestHandler<UpdateMyDomainComman
 
     public async Task<ErrorOr<MyDomainResult>> Handle(UpdateMyDomainCommand request, CancellationToken cancellationToken)
     {
-        var id = MyAggregateId.Create(request.Id);
+        var id = MyDomainId.Create(request.Id);
 
         var aggregate = await _readRepository.GetByIdAsync(id);
 

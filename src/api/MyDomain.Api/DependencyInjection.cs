@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
@@ -21,12 +23,21 @@ public static class DependencyInjection
         var defaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-        services.AddApiVersioning(opt =>
+        services.AddSwaggerGen(options =>
         {
-            opt.DefaultApiVersion = defaultApiVersion;
-            opt.AssumeDefaultVersionWhenUnspecified = true;
-            opt.ReportApiVersions = true;
+            options.SwaggerDoc("v1", new() { Title = "MyDomain API", Version = "v1" });
+
+            var filePath = Path.Combine(
+                AppContext.BaseDirectory,
+                $"{typeof(Program).Assembly.GetName().Name}.xml");
+
+            options.IncludeXmlComments(filePath);
+        });
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = defaultApiVersion;
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
         });
         services.AddVersionedApiExplorer(options =>
         {

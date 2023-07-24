@@ -1,19 +1,19 @@
 using MyDomain.Domain.Common.Models;
 
-namespace MyDomain.Domain.MyAggregate.ValueObjects;
+namespace MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
-public sealed class MyAggregateId : ValueObject
+public sealed class MyDomainId : ValueObject
 {
     public Guid Value { get; }
 
-    private MyAggregateId(Guid value)
+    private MyDomainId(Guid value)
     {
         Value = value;
     }
 
-    public static MyAggregateId CreateUnique() => new(Guid.NewGuid());
+    public static MyDomainId CreateUnique() => new(Guid.NewGuid());
 
-    public static MyAggregateId Create(Guid value) => new(value);
+    public static MyDomainId Create(Guid value) => new(value);
 
     public override IEnumerable<object> GetEqualityComponents()
     {

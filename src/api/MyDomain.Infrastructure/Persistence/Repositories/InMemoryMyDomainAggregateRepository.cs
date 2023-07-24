@@ -1,18 +1,18 @@
 using ErrorOr;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
 namespace MyDomain.Infrastructure.Persistence.Repositories;
 
-public class InMemoryMyAggregateRepository :
-    IReadRepository<MyAggregate, MyAggregateId>,
-    IWriteRepository<MyAggregate, MyAggregateId>
+public class InMemoryMyDomainAggregateRepository :
+    IReadRepository<MyDomainAggregate, MyDomainId>,
+    IWriteRepository<MyDomainAggregate, MyDomainId>
 {
-    private readonly List<MyAggregate> _items = new();
+    private readonly List<MyDomainAggregate> _items = new();
 
-    public async Task<MyAggregate?> GetByIdAsync(MyAggregateId id)
+    public async Task<MyDomainAggregate?> GetByIdAsync(MyDomainId id)
     {
         await Task.CompletedTask;
 
@@ -21,7 +21,7 @@ public class InMemoryMyAggregateRepository :
         return aggregate;
     }
 
-    public async Task<ErrorOr<Created>> AddAsync(MyAggregate data)
+    public async Task<ErrorOr<Created>> AddAsync(MyDomainAggregate data)
     {
         await Task.CompletedTask;
 
@@ -30,7 +30,7 @@ public class InMemoryMyAggregateRepository :
         return Result.Created;
     }
 
-    public async Task<ErrorOr<Updated>> UpdateAsync(MyAggregate data)
+    public async Task<ErrorOr<Updated>> UpdateAsync(MyDomainAggregate data)
     {
         await Task.CompletedTask;
 

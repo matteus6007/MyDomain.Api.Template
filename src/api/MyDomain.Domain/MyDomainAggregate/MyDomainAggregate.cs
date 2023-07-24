@@ -1,34 +1,33 @@
-using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Domain.Common.Models;
-using MyDomain.Domain.MyAggregate.Events;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate.Events;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 
-namespace MyDomain.Domain.MyAggregate;
+namespace MyDomain.Domain.MyDomainAggregate;
 
-public sealed class MyAggregate : AggregateRoot<MyAggregateState, MyAggregateId>
+public sealed class MyDomainAggregate : AggregateRoot<MyDomainState, MyDomainId>
 {
-    public MyAggregate(MyAggregateState state)
+    public MyDomainAggregate(MyDomainState state)
      : base(state)
     {
     }
 
-    public static MyAggregate Create(
+    public static MyDomainAggregate Create(
         string name,
         string description,
         DateTime createdOn)
     {
-        var state = new MyAggregateState
+        var state = new MyDomainState
         {
-            Id = MyAggregateId.CreateUnique(),
+            Id = MyDomainId.CreateUnique(),
             Name = name,
             Description = description,
             CreatedOn = createdOn,
             UpdatedOn = createdOn
         };
 
-        var aggregate = new MyAggregate(state);
+        var aggregate = new MyDomainAggregate(state);
 
-        var @event = new MyAggregateCreated(
+        var @event = new MyDomainCreated(
             aggregate.Id,
             name,
             description,
@@ -48,7 +47,7 @@ public sealed class MyAggregate : AggregateRoot<MyAggregateState, MyAggregateId>
         State.Description = description;
         State.UpdatedOn = updatedOn;
 
-        var @event = new MyAggregateUpdated(
+        var @event = new MyDomainUpdated(
             Id,
             name,
             description,

@@ -2,21 +2,21 @@ using AutoFixture.Xunit2;
 
 using ErrorOr;
 
-using MyDomain.Domain.MyAggregate;
-using MyDomain.Domain.MyAggregate.ValueObjects;
+using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Repositories;
 
 using Shouldly;
 
 namespace MyDomain.Tests.Integration.Repositories;
 
-public class InMemoryMyAggregateRepositoryTests
+public class InMemoryMyDomainAggregateRepositoryTests
 {
-    private readonly InMemoryMyAggregateRepository _sut;
+    private readonly InMemoryMyDomainAggregateRepository _sut;
 
-    public InMemoryMyAggregateRepositoryTests()
+    public InMemoryMyDomainAggregateRepositoryTests()
     {
-        _sut = new InMemoryMyAggregateRepository();
+        _sut = new InMemoryMyDomainAggregateRepository();
     }
 
     [Theory]
@@ -38,7 +38,7 @@ public class InMemoryMyAggregateRepositoryTests
     [Theory]
     [AutoData]
     public async Task GetByIdAsync_WhenRecordDoesNotExist_ThenShouldReturnNull(
-        MyAggregateId id)
+        MyDomainId id)
     {
         // Act
         var result = await _sut.GetByIdAsync(id);
@@ -50,7 +50,7 @@ public class InMemoryMyAggregateRepositoryTests
     [Theory]
     [AutoData]
     public async Task Update_WhenRecordExists_ThenShouldBeUpdated(
-        MyAggregate existingAggregate,
+        MyDomainAggregate existingAggregate,
         string updatedName,
         string updatedDescription)
     {
@@ -76,16 +76,16 @@ public class InMemoryMyAggregateRepositoryTests
         record.State.Description.ShouldBe(updatedDescription);
     }
 
-    private async Task<MyAggregate> GivenRecordExists(string name, string description)
+    private async Task<MyDomainAggregate> GivenRecordExists(string name, string description)
     {
-        var aggregate = MyAggregate.Create(name, description, DateTime.UtcNow);
+        var aggregate = MyDomainAggregate.Create(name, description, DateTime.UtcNow);
 
         await GivenRecordExists(aggregate);
 
         return aggregate;
     }
 
-    private async Task GivenRecordExists(MyAggregate aggregate)
+    private async Task GivenRecordExists(MyDomainAggregate aggregate)
     {
         await _sut.AddAsync(aggregate);
     }
