@@ -32,7 +32,7 @@ services:
       FLYWAY_CONFIG_FILES: /flyway/conf/application.conf
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:2.2
     networks:
       - default
     ports:

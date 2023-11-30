@@ -1,5 +1,7 @@
 using System.Net;
 
+using Asp.Versioning;
+
 using Mapster;
 
 using MapsterMapper;
@@ -25,6 +27,11 @@ public class MyDomainsController : ApiController
     private readonly ISender _mediator;
     private readonly IMapper _mapper;
 
+    /// <summary>
+    /// MyDomain controller
+    /// </summary>
+    /// <param name="mediator">MediatR send request manager</param>
+    /// <param name="mapper">DTO mapper</param>
     public MyDomainsController(ISender mediator, IMapper mapper)
     {
         _mediator = mediator;

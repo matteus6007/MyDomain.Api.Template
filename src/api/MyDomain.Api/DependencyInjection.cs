@@ -1,4 +1,4 @@
-using System.Reflection;
+using Asp.Versioning;
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -20,7 +20,7 @@ public static class DependencyInjection
         services.ConfigureOptions<AssemblyOptionsProvider>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        var defaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+        var defaultApiVersion = new ApiVersion(1, 0);
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
@@ -38,8 +38,7 @@ public static class DependencyInjection
             options.DefaultApiVersion = defaultApiVersion;
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ReportApiVersions = true;
-        });
-        services.AddVersionedApiExplorer(options =>
+        }).AddApiExplorer(options =>
         {
             options.SubstituteApiVersionInUrl = true;
             options.GroupNameFormat = "'v'V";
