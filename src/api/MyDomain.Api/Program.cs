@@ -1,7 +1,8 @@
+using Asp.Versioning.ApiExplorer;
+
 using HealthChecks.UI.Client;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 using MyDomain.Api;
 using MyDomain.Api.Middleware;
