@@ -1,5 +1,3 @@
-using MediatR;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using MyDomain.Application.Common;
@@ -11,7 +9,7 @@ namespace MyDomain.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(DependencyInjection).Assembly);
+            services.AddMediatR(config => config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
             services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
             return services;

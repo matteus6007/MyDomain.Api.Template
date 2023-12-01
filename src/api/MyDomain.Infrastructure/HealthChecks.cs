@@ -24,11 +24,11 @@ public static class HealthChecks
         }
 
         healthChecksBuilder.AddMySql(
-            databaseOptions.ReadConnectionString(),
+            connectionString: databaseOptions.ReadConnectionString(),
             name: "Read MySql Database",
             tags: readDbTags);
         healthChecksBuilder.AddMySql(
-            databaseOptions.WriteConnectionString(),
+            connectionString: databaseOptions.WriteConnectionString(),
             name: "Write MySql Database",
             tags: new[] { databaseOptions.Server });
 
