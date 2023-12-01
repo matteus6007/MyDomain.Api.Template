@@ -4,7 +4,6 @@ using Amazon.SimpleNotificationService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using MyDomain.Application;
 using MyDomain.Application.Common.Interfaces.Messaging;
 using MyDomain.Infrastructure.Messaging.Options;
 
@@ -16,7 +15,9 @@ public static class DependencyInjection
     {
         var snsOptions = configuration.GetSection(SnsOptions.SectionName).Get<SnsOptions>();
 
+#pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
         services.AddSingleton(snsOptions);
+#pragma warning restore CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
 
         if (!string.IsNullOrWhiteSpace(snsOptions?.ServiceUrlOverride))
         {
@@ -38,5 +39,5 @@ public static class DependencyInjection
         services.AddScoped<IEventPublisher, SnsEventPublisher>();
     }
 
-    private static BasicAWSCredentials GetTestCredentials() => new BasicAWSCredentials("test", "test");
+    private static BasicAWSCredentials GetTestCredentials() => new("test", "test");
 }

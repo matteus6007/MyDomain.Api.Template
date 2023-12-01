@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Enable version updates for nuget
+  - package-ecosystem: "nuget"
+    directory: "/src"
+    # Check the nuget registry for updates every month
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+    pull-request-branch-name:
+      separator: '-'    
+    # Ignore major version update for Microsoft packages
+    ignore:
+      - dependency-name: 'Microsoft.Extensions.*'
+        update-types: ["version-update:semver-major"]
+      - dependency-name: 'Microsoft.AspNetCore.*'
+        update-types: ["version-update:semver-major"]    
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/src/api/MyDomain.Api"
+    # Check for updates once a week
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
