@@ -2,11 +2,11 @@ using AutoFixture.Xunit2;
 
 using Microsoft.Extensions.Options;
 
-using Moq;
-
 using MyDomain.Domain.Models;
 using MyDomain.Infrastructure.Persistence.Options;
 using MyDomain.Infrastructure.Persistence.QueryExecutors;
+
+using NSubstitute;
 
 using Shouldly;
 
@@ -21,10 +21,10 @@ public class MyDomainQueryExecutorTests : IDisposable
     {
         _databaseHelper = new DatabaseHelper<Guid, MyDomainReadModel>("MyAggregates", "Id");
 
-        var options = new Mock<IOptionsSnapshot<DatabaseOptions>>();
-        options.Setup(_ => _.Value).Returns(_databaseHelper.Options);
+        var options = Substitute.For<IOptionsSnapshot<DatabaseOptions>>();
+        options.Value.Returns(_databaseHelper.Options);
 
-        _sut = new MyDomainQueryExecutor(options.Object);
+        _sut = new MyDomainQueryExecutor(options);
     }
 
     public void Dispose() => _databaseHelper.CleanTableAsync().GetAwaiter().GetResult();
