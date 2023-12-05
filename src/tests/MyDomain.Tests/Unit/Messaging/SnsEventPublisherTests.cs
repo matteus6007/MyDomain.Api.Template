@@ -110,7 +110,7 @@ public class SnsEventPublisherTests
 
     private void GivenTopicDoesNotExist()
     {
-        _clientMock                
+        _clientMock
             .FindTopicAsync(Arg.Any<string>())
             .Returns((Topic?)null);
     }
@@ -136,7 +136,7 @@ public class SnsEventPublisherTests
 
     private void GivenPublishFailsButSucceedsOnSecondAttempt()
     {
-        _ = _clientMock
+        _clientMock
             .PublishAsync(Arg.Any<PublishRequest>(), Arg.Any<CancellationToken>())
             .Returns(
                 _ => { throw new Exception("Something went wrong"); },
