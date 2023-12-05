@@ -4,6 +4,8 @@ networks:
   default:
     name: mydomain-api
 
+name: mydomain-api
+
 services:
   local-db:
     image: mysql:5.7
@@ -42,7 +44,8 @@ services:
     volumes:
       - localstackdata:/tmp/localstack
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
+      - '~/.ca_certs:/tmp/certs'
+    environment:    
       - SERVICES=s3,sns,sqs,sts
       - DEBUG=1
       - DATA_DIR=${DATA_DIR- }

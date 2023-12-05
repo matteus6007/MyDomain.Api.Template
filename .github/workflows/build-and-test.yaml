@@ -34,10 +34,10 @@ jobs:
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
     - name: Init Terraform (AWS)
-      run: docker run --rm -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local init
+      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
     - name: Apply Terraform (AWS)
       if: success()
-      run: docker run --rm --network mydomain-api -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local apply -input=false -auto-approve
+      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
     - name: Code Coverage
@@ -52,7 +52,7 @@ jobs:
         path: "testresults/test-results.trx"
     - name: Destroy Terraform (AWS)
       if: always()
-      run: docker run --rm --network mydomain-api -v $PWD/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local destroy -input=false -auto-approve      
+      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
     - name: Teardown local test environment
       if: always()
       run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans

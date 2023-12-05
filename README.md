@@ -50,6 +50,10 @@ Stop environment:
 
 `.\environment.ps1 stop`
 
+_Optionally_ you can override the environment variable file:
+
+`.\environment.ps1 start|stop -env_file "{environment}.env"`
+
 ## Running the Application
 
 [Health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks) can be extended using https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks

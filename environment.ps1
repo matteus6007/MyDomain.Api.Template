@@ -1,15 +1,23 @@
 Param (
     [ValidateSet("start", "stop")]
     [Parameter(Mandatory=$true)]
-    [string] $cmd
+    [string] $cmd,
+    [Parameter(Mandatory=$false)]
+    [string] $env_file = ""
 )
 
+$env_file_command = "";
+
+if ($env_file) {
+  $env_file_command = "--env-file $env_file"
+}
+
 if ($cmd -eq "start") {
-  docker-compose -f docker-compose.dev-env.yml up -d
-  docker run --rm -v ${pwd}/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local init
-  docker run --rm --network mydomain-api -v ${pwd}/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local apply -input=false -auto-approve
+  Invoke-Expression "docker-compose -f docker-compose.dev-env.yml $env_file_command up -d"
+  Invoke-Expression "docker-compose -f docker-compose.dev-terraform.yml $env_file_command run --rm terraform init"
+  Invoke-Expression "docker-compose -f docker-compose.dev-terraform.yml $env_file_command run --rm terraform apply -input=false -auto-approve"
 }
 else {
-  docker run --rm --network mydomain-api -v ${pwd}/terraform:/terraform -w /terraform hashicorp/terraform -chdir=/terraform/local destroy -input=false -auto-approve
-  docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans
+  Invoke-Expression "docker-compose -f docker-compose.dev-terraform.yml $env_file_command run --rm terraform destroy -input=false -auto-approve"
+  Invoke-Expression "docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans"
 }

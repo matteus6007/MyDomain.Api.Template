@@ -405,3 +405,6 @@ FodyWeavers.xsd
 state.json
 terraform.tfstate
 terraform.tfstate.backup
+
+#Firewall certificate
+firewall-proxy.env
