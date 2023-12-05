@@ -40,7 +40,8 @@ Example configuration in `appsettings.json`:
   * Database migrations using [Flyway](https://flywaydb.org/)
 * AWS resources
   * [Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/custom-service-endpoints#localstack)
-  * [Localstack](https://github.com/localstack/localstack) 
+  * [Localstack](https://github.com/localstack/localstack)
+* Mocking using [Wiremock](https://wiremock.org/docs/overview/)
 
 Start environment:
 
@@ -53,6 +54,8 @@ Stop environment:
 _Optionally_ you can override the environment variable file:
 
 `.\environment.ps1 start|stop -env_file "{environment}.env"`
+
+Navigate to http://localhost:8081/__admin/mappings to display mock mappings.
 
 ## Running the Application
 
