@@ -1,0 +1,19 @@
+version: '3.7'
+
+networks:
+  mydomain-api:
+    external: true
+
+services:
+  terraform:
+    image: hashicorp/terraform:1.6
+    networks:
+      - mydomain-api
+    volumes:
+      - ./terraform/local:/terraform
+      - '~/.ca_certs:/tmp/certs'
+    working_dir: /terraform
+    environment:
+      - REQUESTS_CA_BUNDLE=${REQUESTS_CA_BUNDLE}
+      - SSL_CERT_FILE=${SSL_CERT_FILE}
+  
