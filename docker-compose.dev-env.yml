@@ -4,8 +4,6 @@ networks:
   default:
     name: mydomain-api
 
-name: mydomain-api
-
 services:
   local-db:
     image: mysql:5.7
