@@ -4,13 +4,13 @@ using ErrorOr;
 
 using Microsoft.Extensions.Options;
 
-using Moq;
-
 using MyDomain.Domain.MyDomainAggregate;
 using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
 using MyDomain.Infrastructure.Persistence.Repositories;
 using MyDomain.Tests.Integration.Infrastructure;
+
+using NSubstitute;
 
 using Shouldly;
 
@@ -27,12 +27,12 @@ public class MyDomainAggregateRepositoryTests : IDisposable
     {
         _databaseHelper = new DatabaseHelper<Guid, MyDomainState>("MyAggregates", "Id");
 
-        var options = new Mock<IOptionsSnapshot<DatabaseOptions>>();
-        options.Setup(_ => _.Value).Returns(_databaseHelper.Options);
+        var options = Substitute.For<IOptionsSnapshot<DatabaseOptions>>();
+        options.Value.Returns(_databaseHelper.Options);
 
         MyDomainIdTypeHandler.AddTypeHandlers();
 
-        _sut = new MyDomainAggregateRepository(options.Object);
+        _sut = new MyDomainAggregateRepository(options);
     }
 
     public void Dispose() => _databaseHelper.CleanTableAsync().GetAwaiter().GetResult();

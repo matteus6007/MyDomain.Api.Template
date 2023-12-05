@@ -2,15 +2,14 @@
 
 using ErrorOr;
 
-using Moq;
-
 using MyDomain.Application.Common.Interfaces.Messaging;
 using MyDomain.Application.Common.Interfaces.Persistence;
-using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Domain.MyDomainAggregate;
 using MyDomain.Domain.MyDomainAggregate.Events;
 using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence;
+
+using NSubstitute;
 
 using Shouldly;
 
@@ -18,15 +17,15 @@ namespace MyDomain.Tests;
 
 public class AggregatePersistenceServiceTests
 {
-    private readonly Mock<IEventPublisher> _eventPublisherMock = new();
-    private readonly Mock<IWriteRepository<MyDomainAggregate, MyDomainId>> _repositoryMock = new();
+    private readonly IEventPublisher _eventPublisherMock = Substitute.For<IEventPublisher>();
+    private readonly IWriteRepository<MyDomainAggregate, MyDomainId> _repositoryMock = Substitute.For<IWriteRepository<MyDomainAggregate, MyDomainId>>();
     private readonly IAggregatePersistenceService<MyDomainAggregate, MyDomainId> _sut;
 
     public AggregatePersistenceServiceTests()
     {
         _sut = new AggregatePersistenceService<MyDomainAggregate, MyDomainId>(
-            _eventPublisherMock.Object,
-            _repositoryMock.Object);
+            _eventPublisherMock,
+            _repositoryMock);
     }
 
     [Theory]
@@ -73,15 +72,15 @@ public class AggregatePersistenceServiceTests
     private void GivenRecordIsCreatedSuccessfully()
     {
         _repositoryMock
-            .Setup(x => x.AddAsync(It.IsAny<MyDomainAggregate>()))
-            .ReturnsAsync(Result.Created);
+            .AddAsync(Arg.Any<MyDomainAggregate>())
+            .Returns(Result.Created);
     }
 
     private void GivenRecordIsUpdatedSuccessfully()
     {
         _repositoryMock
-            .Setup(x => x.UpdateAsync(It.IsAny<MyDomainAggregate>()))
-            .ReturnsAsync(Result.Updated);
+            .UpdateAsync(Arg.Any<MyDomainAggregate>())
+            .Returns(Result.Updated);
     }
 
     private static void ThenResultShouldBeSuccess(ErrorOr<Success> result)
@@ -93,24 +92,28 @@ public class AggregatePersistenceServiceTests
     private void TheRecordShouldBeCreated(MyDomainAggregate aggregate)
     {
         _repositoryMock
-            .Verify(x => x.AddAsync(aggregate));
+            .Received()
+            .AddAsync(aggregate);
     }
 
     private void ThenCreatedEventShouldBePublished()
     {
         _eventPublisherMock
-            .Verify(x => x.PublishAsync(It.Is<IDomainEvent>(y => y.GetType() == typeof(MyDomainCreated))));
+            .Received()
+            .PublishAsync(Arg.Any<MyDomainCreated>());
     }
 
     private void ThenRecordShouldBeUpdated(MyDomainAggregate aggregate)
     {
         _repositoryMock
-            .Verify(x => x.UpdateAsync(aggregate));
+            .Received()
+            .UpdateAsync(aggregate);
     }
 
     private void ThenUpdatedEventShouldBePublished()
     {
         _eventPublisherMock
-            .Verify(x => x.PublishAsync(It.Is<IDomainEvent>(y => y.GetType() == typeof(MyDomainUpdated))));
+            .Received()
+            .PublishAsync(Arg.Any<MyDomainUpdated>());
     }
 }

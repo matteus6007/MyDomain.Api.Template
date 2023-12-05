@@ -5,13 +5,13 @@ using ErrorOr;
 
 using Microsoft.Extensions.Logging;
 
-using Moq;
-
 using MyDomain.Application.Common.Interfaces.Messaging;
 using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Domain.Common.Models.Messaging;
 using MyDomain.Infrastructure.Messaging;
 using MyDomain.Infrastructure.Messaging.Options;
+
+using NSubstitute;
 
 using Shouldly;
 
@@ -19,9 +19,9 @@ namespace MyDomain.Tests.Unit.Messaging;
 
 public class SnsEventPublisherTests
 {
-    private readonly Mock<IAmazonSimpleNotificationService> _clientMock = new();
-    private readonly Mock<IMessageEnvelopeBuilder> _messageEnvelopeFactoryMock = new();
-    private readonly Mock<ILogger<SnsEventPublisher>> _loggerMock = new();
+    private readonly IAmazonSimpleNotificationService _clientMock = Substitute.For<IAmazonSimpleNotificationService>();
+    private readonly IMessageEnvelopeBuilder _messageEnvelopeBuilderMock = Substitute.For<IMessageEnvelopeBuilder>();
+    private readonly ILogger<SnsEventPublisher> _loggerMock = Substitute.For<ILogger<SnsEventPublisher>>();
 
     [Fact]
     public async Task PublishAsync_WhenTopicNameIsEmpty_ThenShouldReturnError()
@@ -103,16 +103,16 @@ public class SnsEventPublisherTests
     {
         return new SnsEventPublisher(
             options,
-            _messageEnvelopeFactoryMock.Object,
-            _clientMock.Object,
-            _loggerMock.Object);
+            _messageEnvelopeBuilderMock,
+            _clientMock,
+            _loggerMock);
     }
 
     private void GivenTopicDoesNotExist()
     {
-        _clientMock
-            .Setup(x => x.FindTopicAsync(It.IsAny<string>()))
-            .ReturnsAsync((Topic?)null);
+        _clientMock                
+            .FindTopicAsync(Arg.Any<string>())
+            .Returns((Topic?)null);
     }
 
     private void GivenTopicExists()
@@ -123,34 +123,37 @@ public class SnsEventPublisherTests
         };
 
         _clientMock
-            .Setup(x => x.FindTopicAsync(It.IsAny<string>()))
-            .ReturnsAsync(expectedTopic);
+            .FindTopicAsync(Arg.Any<string>())
+            .Returns(expectedTopic);
     }
 
     private void GivenMessageEnvelopeIsCreated(TestEvent @event)
     {
-        _messageEnvelopeFactoryMock
-           .Setup(x => x.CreateMessageEnvelopeAsync(It.IsAny<IDomainEvent>()))
-           .ReturnsAsync(new MessageEnvelope(@event));
+        _messageEnvelopeBuilderMock
+           .CreateMessageEnvelopeAsync(Arg.Any<IDomainEvent>())
+           .Returns(new MessageEnvelope(@event));
     }
 
     private void GivenPublishFailsButSucceedsOnSecondAttempt()
     {
-        _clientMock
-            .SetupSequence(x => x.PublishAsync(It.IsAny<PublishRequest>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("Something went wrong"))
-            .ReturnsAsync(new PublishResponse());
+        _ = _clientMock
+            .PublishAsync(Arg.Any<PublishRequest>(), Arg.Any<CancellationToken>())
+            .Returns(
+                _ => { throw new Exception("Something went wrong"); },
+                _ => new PublishResponse());
     }
 
     private void ThenTopicShouldBeFound(SnsOptions options)
     {
         _clientMock
-            .Verify(x => x.FindTopicAsync(options.TopicName), Times.Once);
+            .Received(1)
+            .FindTopicAsync(options.TopicName);
     }
 
     private void ThenEventShouldBePublished()
     {
         _clientMock
-            .Verify(x => x.PublishAsync(It.IsAny<PublishRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+            .Received(2)
+            .PublishAsync(Arg.Any<PublishRequest>(), Arg.Any<CancellationToken>());
     }
 }
