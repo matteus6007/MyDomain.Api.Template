@@ -19,5 +19,5 @@ if ($cmd -eq "start") {
 }
 else {
   Invoke-Expression "docker-compose -f docker-compose.dev-terraform.yml $env_file_command run --rm terraform destroy -input=false -auto-approve"
-  Invoke-Expression "docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans"
+  Invoke-Expression "docker-compose -f docker-compose.dev-env.yml $env_file_command down -v --rmi local --remove-orphans"
 }

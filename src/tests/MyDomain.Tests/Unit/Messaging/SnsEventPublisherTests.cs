@@ -139,7 +139,7 @@ public class SnsEventPublisherTests
         _clientMock
             .PublishAsync(Arg.Any<PublishRequest>(), Arg.Any<CancellationToken>())
             .Returns(
-                _ => { throw new Exception("Something went wrong"); },
+                _ => throw new Exception("Something went wrong"),
                 _ => new PublishResponse());
     }
 
