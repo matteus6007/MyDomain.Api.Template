@@ -6,7 +6,7 @@ networks:
 
 services:
   local-db:
-    image: mysql:5.7
+    image: mysql:8.1.0
     restart: unless-stopped
     networks:
       - default
@@ -22,10 +22,10 @@ services:
       - local-db
     networks:
       - default
-    image: flyway/flyway:7.15
+    image: flyway/flyway:10.1.0
     volumes:
       - ./db/sql:/flyway/sql
-      - ./db/config:/flyway/conf
+      - ./db/config/local:/flyway/conf
     command: migrate -connectRetries=20
     environment:
       FLYWAY_EDITION: community
