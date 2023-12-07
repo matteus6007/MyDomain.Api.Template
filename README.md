@@ -67,15 +67,15 @@ _Note: requires local test environment._
 
 `dotnet run --project ./src/api/MyDomain.Api`
 
-* Swagger - `http://localhost:5185/swagger/index.html`
-* Health checks - `http://localhost:5185/healthchecks-ui`
+* Swagger - http://localhost:5185/swagger/index.html
+* Health checks - http://localhost:5185/healthchecks-ui
 
 ### Docker
 
 `docker-compose up --build`
 
-* Swagger - `http://localhost:1001/swagger/index.html`
-* Health checks - `http://localhost:1001/healthchecks-ui`
+* Swagger - http://localhost:1001/swagger/index.html
+* Health checks - http://localhost:1001/healthchecks-ui
 
 ## Testing
 
