@@ -31,6 +31,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
     - name: Init Terraform (AWS)
