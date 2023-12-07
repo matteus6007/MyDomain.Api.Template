@@ -406,5 +406,6 @@ state.json
 terraform.tfstate
 terraform.tfstate.backup
 
-#Firewall certificate
+#Certificates
 firewall-proxy.env
+**/*.crt
