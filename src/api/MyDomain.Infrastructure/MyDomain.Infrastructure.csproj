@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="6.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.MySql" Version="7.0.0" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.300.12" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.300.15" />
     <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

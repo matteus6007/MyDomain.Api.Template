@@ -81,7 +81,7 @@ _Note: requires local test environment._
 
 ### Locally
 
-`dotnet test ./src/api`
+`dotnet test ./src`
 
 ### Docker
 
