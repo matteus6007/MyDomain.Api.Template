@@ -29,6 +29,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      checks: write
+      pull-requests: write    
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -46,12 +50,11 @@ jobs:
       uses: codecov/codecov-action@v3
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    - name: Upload Test Results
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
-      uses: actions/upload-artifact@v3
       with:
-        name: test-results
-        path: "testresults/test-results.trx"
+        files: test-results/**/*.trx
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
