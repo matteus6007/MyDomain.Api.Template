@@ -48,13 +48,14 @@ jobs:
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
     - name: Code Coverage
       uses: codecov/codecov-action@v3
+      if: always()
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
-        files: test-results/**/*.trx
+        files: test-results/*.trx
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve

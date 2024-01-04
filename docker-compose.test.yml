@@ -16,4 +16,4 @@ services:
     env_file:
       - ./docker-compose.env   
     volumes:
-      - ./testresults:/src/tests/MyDomain.Tests/TestResults
+      - ./src/tests/MyDomain.Tests/TestResults:/testresults
