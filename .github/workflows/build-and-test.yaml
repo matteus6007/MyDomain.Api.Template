@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: test-results
-        path: "${{ github.workspace }}/testresults/test-results.trx"
+        path: "${{ github.workspace }}/testresults/*.trx"
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
