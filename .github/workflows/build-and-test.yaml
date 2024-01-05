@@ -85,6 +85,7 @@ jobs:
       if: always()
       uses: EnricoMi/publish-unit-test-result-action@v2
       with:
+        check_run_annotations_branch: "*"
         files: "artifacts/**/*.trx"
     - name: Set badge color
       shell: bash
