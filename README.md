@@ -1,6 +1,6 @@
 # MyDomain.Api.Template
 
-[![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template) [![tests](https://gist.github.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)](https://gist.github.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)
+[![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template) [![tests](https://gist.githubusercontent.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)](https://gist.githubusercontent.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)
 
 ## Linting
 
