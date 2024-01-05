@@ -1,6 +1,6 @@
 # MyDomain.Api.Template
 
-[![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template)
+[![codecov](https://codecov.io/gh/matteus6007/MyDomain.Api.Template/branch/main/graph/badge.svg)](https://codecov.io/gh/matteus6007/MyDomain.Api.Template) [![tests](https://gist.github.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)](https://gist.github.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7/raw/tests.svg)
 
 ## Linting
 
@@ -92,3 +92,11 @@ _Note: requires local test environment._
 Managed using [Codecov](https://about.codecov.io/).
 
 To set up the repository you need to create a token `CODECOV_TOKEN` and enable app integration - see https://docs.codecov.com/docs/github-2-getting-a-codecov-account-and-uploading-coverage.
+
+## Test Status Badge
+
+Uses [append-to-gist](https://github.com/marketplace/actions/append-to-gist) action to update `tests.svg`, requires:
+
+1. Creating new gist with the `gistURL` set in the form `https://gist.githubusercontent.com/{user}/{id}`
+2. Personal access toke (PAT) with `gist` permission only
+3. GitHub Actions secret `GIST_TOKEN` using above PAT
