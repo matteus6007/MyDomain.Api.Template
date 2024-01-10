@@ -4,9 +4,7 @@ using Amazon.SimpleNotificationService.Model;
 using ErrorOr;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-using MyDomain.Application;
 using MyDomain.Application.Common.Interfaces.Messaging;
 using MyDomain.Domain.Common.Interfaces;
 using MyDomain.Infrastructure.Messaging.Options;

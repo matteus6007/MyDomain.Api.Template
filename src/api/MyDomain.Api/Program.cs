@@ -9,15 +9,22 @@ using MyDomain.Api.Middleware;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
 using MyDomain.Infrastructure.Messaging;
+using MyDomain.Infrastructure.Persistence;
+using MyDomain.Infrastructure.Secrets;
 
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Services.AddInfrastructure(builder.Configuration);
+
+    // needs to be configured early to ensure secrets are loaded before GetSecion is called
+    builder.Configuration.AddAmazonSecretsManager(builder.Configuration);
+
     builder.Services.AddPresentation();
     builder.Services.AddApplication();
-    builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddMessaging(builder.Configuration);
+    builder.Services.AddPersistence(builder.Configuration);
     builder.Services
         .ConfigureHealthChecks(builder.Configuration)
         .AddInfrastructureHealthChecks(builder.Configuration);

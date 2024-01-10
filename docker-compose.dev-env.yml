@@ -44,7 +44,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - '~/.ca_certs:/tmp/certs'
     environment:    
-      - SERVICES=s3,sns,sqs,sts
+      - SERVICES=s3,secretsmanager,sns,sqs,sts
       - DEBUG=1
       - DATA_DIR=${DATA_DIR- }
       - PORT_WEB_UI=${PORT_WEB_UI- }
