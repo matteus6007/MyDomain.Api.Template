@@ -18,6 +18,7 @@ public static class DependencyInjection
     {
         MyDomainIdTypeHandler.AddTypeHandlers();
 
+        services.AddDefaultAWSOptions(configuration.GetAWSOptions());
         services.Configure<DatabaseOptions>(opts => configuration.GetSection(DatabaseOptions.SectionName).Bind(opts));
         // services.AddScoped<IReadRepository<MyAggregate, MyAggregateId>, InMemoryMyAggregateRepository>();
         // services.AddScoped<IWriteRepository<MyAggregate, MyAggregateId>, InMemoryMyAggregateRepository>();

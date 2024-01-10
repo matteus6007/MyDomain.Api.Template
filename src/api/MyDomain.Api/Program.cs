@@ -9,6 +9,7 @@ using MyDomain.Api.Middleware;
 using MyDomain.Application;
 using MyDomain.Infrastructure;
 using MyDomain.Infrastructure.Messaging;
+using MyDomain.Infrastructure.Secrets;
 
 using Serilog;
 
@@ -21,6 +22,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services
         .ConfigureHealthChecks(builder.Configuration)
         .AddInfrastructureHealthChecks(builder.Configuration);
+
+    builder.Configuration.AddAmazonSecretsManager(builder.Configuration);
 }
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));

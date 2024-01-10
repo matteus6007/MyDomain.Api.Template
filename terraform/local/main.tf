@@ -17,9 +17,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    s3    = "http://localstack:4566"              
-    sns   = "http://localstack:4566"
-    sqs   = "http://localstack:4566"
-    sts   = "http://localstack:4566"
+    s3              = "http://localstack:4566"
+    secretsmanager  = "http://localstack:4566"
+    sns             = "http://localstack:4566"
+    sqs             = "http://localstack:4566"
+    sts             = "http://localstack:4566"
   }
 }
