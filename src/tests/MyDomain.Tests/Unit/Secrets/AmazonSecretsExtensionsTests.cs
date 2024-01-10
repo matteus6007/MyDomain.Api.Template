@@ -9,7 +9,7 @@ namespace MyDomain.Tests.Unit.Secrets
         private const string SecretName = "Test-Secret";
 
         [Theory]
-        [InlineData("{\"mydomain\":{\"database\":{\"password\":\"password123\",\"user\":\"root\"}}}", "mydomain:database")]
+        [InlineData("{\"settings\":{\"values\":{\"string\":\"some string\",\"true\":true,\"false\":false,\"number\":0}}}", "settings:values")]
         public void WhenParsingSecret_AndSecretIsComplexJson_ThenShouldReturnDictionary(string secret, string expectedKeyPrefix)
         {
             // Act
@@ -17,8 +17,10 @@ namespace MyDomain.Tests.Unit.Secrets
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "password")));
-            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "user")));
+            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "string")));
+            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "true")));
+            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "false")));
+            Assert.True(result.ContainsKey(string.Join(":", expectedKeyPrefix, "number")));
         }
 
         [Theory]
@@ -43,6 +45,25 @@ namespace MyDomain.Tests.Unit.Secrets
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count());
+        }
+
+        [Theory]
+        [InlineData("{\"settings\":null}")]
+        public void WhenParsingSecret_AndSecretIsComplexJson_AndPropertyIsNull_ThenShouldThrowFormatException(string secret)
+        {
+            Assert.Throws<FormatException>(() => AmazonSecretsExtensions.ParseSecret(SecretName, secret));
+        }
+
+        [Theory]
+        [InlineData("{\"settings\"}")]
+        public void WhenParsingSecret_AndSecretIsComplexJson_AndJsonIsNotValid_ThenShouldReturnDictionary(string secret)
+        {
+            // Act
+            var result = AmazonSecretsExtensions.ParseSecret(SecretName, secret);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.ContainsKey(SecretName));
         }
 
         [Fact]
