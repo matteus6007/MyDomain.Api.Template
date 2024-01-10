@@ -17,7 +17,7 @@ public class BuildVersionResponseMiddleware
 
     public Task Invoke(HttpContext context)
     {
-        context.Response.Headers.Add("X-Build-Version", _options.Version);
+        context.Response.Headers.Append("X-Build-Version", _options.Version);
 
         return _next(context);
     }

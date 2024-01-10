@@ -78,7 +78,7 @@ namespace MyDomain.Tests.Unit.Secrets
         private IConfigurationRoot GivenSecretsManagerIsConfiguredForSecret(string secretKey)
         {
             var configurationSource = new AmazonSecretsManagerConfigurationSource(_cache, secretKey);
-            
+
             var builder = new ConfigurationBuilder();
             builder.Add(configurationSource);
 
