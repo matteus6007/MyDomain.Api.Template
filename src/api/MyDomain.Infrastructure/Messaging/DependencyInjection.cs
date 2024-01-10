@@ -24,7 +24,6 @@ public static class DependencyInjection
             var clientConfig = new AmazonSimpleNotificationServiceConfig
             {
                 ServiceURL = snsOptions.ServiceUrlOverride,
-                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
                 UseHttp = true
             };
 

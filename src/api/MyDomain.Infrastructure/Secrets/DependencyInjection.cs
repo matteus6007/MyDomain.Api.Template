@@ -23,7 +23,6 @@ public static class DependencyInjection
             var clientConfig = new AmazonSecretsManagerConfig
             {
                 ServiceURL = options.ServiceUrlOverride,
-                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
                 UseHttp = true
             };
 
