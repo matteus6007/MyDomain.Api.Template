@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MyDomain.Application.Common.Interfaces.Persistence;
 using MyDomain.Domain.Models;
-using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Domain.MyDomainAggregate;
+using MyDomain.Domain.MyDomainAggregate.ValueObjects;
 using MyDomain.Infrastructure.Persistence.Options;
 using MyDomain.Infrastructure.Persistence.QueryExecutors;
 using MyDomain.Infrastructure.Persistence.Repositories;
