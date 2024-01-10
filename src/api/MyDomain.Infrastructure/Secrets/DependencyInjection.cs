@@ -1,4 +1,5 @@
-﻿using Amazon.SecretsManager;
+﻿using Amazon;
+using Amazon.SecretsManager;
 using Amazon.SecretsManager.Extensions.Caching;
 
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,8 @@ public static class DependencyInjection
             var clientConfig = new AmazonSecretsManagerConfig
             {
                 ServiceURL = options.ServiceUrlOverride,
-                UseHttp = true
+                UseHttp = true,
+                AuthenticationRegion = RegionEndpoint.EUWest1.SystemName
             };
 
             client = new AmazonSecretsManagerClient(AwsExtensions.GetTestCredentials(), clientConfig);
