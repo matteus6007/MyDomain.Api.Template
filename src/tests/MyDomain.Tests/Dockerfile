@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+ARG HUSKY=0
+
 # restore
 COPY ./src/api api
 RUN dotnet restore "api/MyDomain.Api/MyDomain.Api.csproj"
