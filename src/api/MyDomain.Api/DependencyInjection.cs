@@ -3,6 +3,13 @@ using Asp.Versioning;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
+using IdentityModel;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
+
+using MyDomain.Api.Authorization;
 using MyDomain.Api.Common.Mapping;
 using MyDomain.Api.Options;
 
@@ -25,6 +32,34 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+
+                    },
+                    new List<string>()
+                }
+            });
+
             options.SwaggerDoc("v1", new() { Title = "MyDomain API", Version = "v1" });
 
             var filePath = Path.Combine(
@@ -44,6 +79,42 @@ public static class DependencyInjection
             options.GroupNameFormat = "'v'V";
             options.DefaultApiVersion = defaultApiVersion;
             options.AssumeDefaultVersionWhenUnspecified = true;
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var identityOptions = configuration.GetSection(IdentityOptions.SectionName).Get<IdentityOptions>() ?? new IdentityOptions();
+
+        var authenticationBuilder = services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        });
+
+        authenticationBuilder.AddJwtBearer(options =>
+        {
+            options.Authority = identityOptions.Issuer;
+            options.Audience = identityOptions.Audience;
+            options.RequireHttpsMetadata = identityOptions.RequireHttpsMetadata;
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
+            defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+
+            options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            options.AddPolicy(Policies.Read, policy => policy.RequireClaim(JwtClaimTypes.Scope, Scopes.Read, Scopes.Write));
+            options.AddPolicy(Policies.Write, policy => policy.RequireClaim(JwtClaimTypes.Scope, Scopes.Write));
         });
 
         return services;

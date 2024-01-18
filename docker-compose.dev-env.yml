@@ -14,6 +14,8 @@ services:
       - "30000:3306"
     volumes:
       - localdbdata:/var/lib/mysql
+    # Set max_allowed_packet to 256M
+    command: --max_allowed_packet=32505856
     environment:
       MYSQL_ROOT_PASSWORD: password123
       MYSQL_DATABASE: localdefaultdb

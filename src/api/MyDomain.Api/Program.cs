@@ -22,6 +22,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddAmazonSecretsManager(builder.Configuration);
 
     builder.Services.AddPresentation();
+    builder.Services.ConfigureAuthentication(builder.Configuration);
+    builder.Services.ConfigureAuthorization();
     builder.Services.AddApplication();
     builder.Services.AddMessaging(builder.Configuration);
     builder.Services.AddPersistence(builder.Configuration);
@@ -52,10 +54,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseMiddleware<BuildVersionResponseMiddleware>();
 app.UseExceptionHandler("/error");
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHealthChecks("/healthcheck/tests", new HealthCheckOptions
 {
     Predicate = _ => true,
