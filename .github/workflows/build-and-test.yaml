@@ -10,6 +10,7 @@ on:
 
 env:
   SOURCE_DIRECTORY: "./src"
+  HUSKY: 0
 
 jobs:
   build:
