@@ -8,8 +8,10 @@ using MapsterMapper;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using MyDomain.Api.Authorization;
 using MyDomain.Application.Services.Commands.CreateMyDomain;
 using MyDomain.Application.Services.Commands.UpdateMyDomain;
 using MyDomain.Application.Services.Queries;
@@ -44,9 +46,11 @@ public class MyDomainsController : ApiController
     /// <param name="id">MyDomain ID</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="200">MyDomain returned</response>
+    /// <response code="401">Not authorized</response>
     /// <response code="404">MyDomain not found</response>
     [HttpGet]
     [Route("{id:guid}")]
+    [Authorize(Policies.Read)]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -65,7 +69,9 @@ public class MyDomainsController : ApiController
     /// <param name="request">Create new MyDomain request</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="201">MyDomain created</response>
+    /// <response code="401">Not authorized</response>
     [HttpPost]
+    [Authorize(Policies.Write)]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
     public async Task<IActionResult> Create(CreateMyDomainRequest request)
     {
@@ -85,9 +91,11 @@ public class MyDomainsController : ApiController
     /// <param name="request">Update MyDomain request</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="200">MyDomain returned</response>
+    /// <response code="401">Not authorized</response>
     /// <response code="404">MyDomain not found</response>
     [HttpPut]
     [Route("{id:guid}")]
+    [Authorize(Policies.Write)]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> Update(Guid id, UpdateMyDomainRequest request)
     {

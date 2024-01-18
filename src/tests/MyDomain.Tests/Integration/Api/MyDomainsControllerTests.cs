@@ -1,8 +1,9 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
-
 using AutoFixture.Xunit2;
 
+using MyDomain.Api.Authorization;
 using MyDomain.Contracts.Models.V1;
 
 using Newtonsoft.Json;
@@ -27,12 +28,13 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task GetById_WhenMyDomainExists_ThenShouldReturnMyDomain(
+    public async Task GetById_WhenIsAuthenticated_AndMyDomainExists_ThenShouldReturnMyDomain(
         string name)
     {
         // Arrange
         var result = await Given_MyDomainExists(name);
         var request = Given_GetMyDomainByIdRequest(result!.Id);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -45,11 +47,12 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task GetById_WhenMyDomainDoesNotExist_ThenShouldReturnNotFound(
+    public async Task GetById_WhenIsAuthenticated_AndMyDomainDoesNotExist_ThenShouldReturnNotFound(
         Guid id)
     {
         // Arrange
         var request = Given_GetMyDomainByIdRequest(id);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -60,11 +63,27 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task Create_WhenMyDomainIsCreatedSuccessfully_ThenShouldReturnCreated(
+    public async Task GetById_WhenIsNotAuthenticated_ThenShouldReturnUnauthorized(
+        Guid id)
+    {
+        // Arrange
+        var request = Given_GetMyDomainByIdRequest(id);
+
+        // Act
+        var response = await _client.SendAsync(request);
+
+        // Assert
+        Then_Response_ShouldBeUnauthorized(response);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task Create_WhenIsAuthenticated_ThenShouldReturnCreated(
         string name)
     {
         // Arrange
         var request = Given_CreateDomainRequest(name);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -76,10 +95,11 @@ public class MyDomainsControllerTests
     }
 
     [Fact]
-    public async Task Create_WhenRequestIsMissingRequiredFields_ThenShouldReturnBadRequest()
+    public async Task Create_WhenIsAuthenticated_AndRequestIsMissingRequiredFields_ThenShouldReturnBadRequest()
     {
         // Arrange
         var request = Given_CreateDomainRequest(string.Empty);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -90,13 +110,14 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task Update_WhenMyDomainIsUpdatedSuccessfully_ThenShouldReturnOk(
+    public async Task Update_WhenIsAuthenticated_ThenShouldReturnOk(
         string name,
         string description)
     {
         // Arrange
         var result = await Given_MyDomainExists(name);
         var request = Given_UpdateDomainRequest(result!.Id, name, description);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -109,11 +130,12 @@ public class MyDomainsControllerTests
 
     [Theory]
     [AutoData]
-    public async Task Update_WhenRequestIsMissingRequiredFields_ThenShouldReturnBadRequest(
+    public async Task Update_WhenIsAuthenticated_AndRequestIsMissingRequiredFields_ThenShouldReturnBadRequest(
         Guid id)
     {
         // Arrange
         var request = Given_UpdateDomainRequest(id, string.Empty, string.Empty);
+        Given_RequestIsAuthenticated(request);
 
         // Act
         var response = await _client.SendAsync(request);
@@ -159,9 +181,17 @@ public class MyDomainsControllerTests
         };
     }
 
+    private void Given_RequestIsAuthenticated(HttpRequestMessage request)
+    {
+        var token = _fixture.GenerateTokenFor(Scopes.Write);
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
     private async Task<MyDomainDto?> Given_MyDomainExists(string name)
     {
         var createRequest = Given_CreateDomainRequest(name);
+        Given_RequestIsAuthenticated(createRequest);
         var createResponse = await _client.SendAsync(createRequest);
 
         var content = await createResponse.Content.ReadAsStringAsync();
@@ -192,6 +222,12 @@ public class MyDomainsControllerTests
     {
         response.ShouldNotBeNull();
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    private static void Then_Response_ShouldBeUnauthorized(HttpResponseMessage response)
+    {
+        response.ShouldNotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     private static void Then_Content_ShouldBeCorrect(string content, string name)

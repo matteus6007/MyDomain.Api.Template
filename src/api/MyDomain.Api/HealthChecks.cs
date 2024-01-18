@@ -1,3 +1,5 @@
+using MyDomain.Api.Options;
+
 namespace MyDomain.Api;
 
 public static class HealthChecks
@@ -21,6 +23,20 @@ public static class HealthChecks
                 setup.AddHealthCheckEndpoint("API", healthCheckEndpoint);
                 setup.SetEvaluationTimeInSeconds(60);
             }).AddInMemoryStorage();
+        }
+
+        var jwtOptions = configuration.GetSection(IdentityOptions.SectionName).Get<IdentityOptions>();
+
+        if (jwtOptions != null)
+        {
+            healthChecksBuilder.AddIdentityServer(
+                idSvrUri: new Uri(jwtOptions.Issuer), 
+                name: "Identity Server",
+                tags: new string[]
+                {
+                    $"{nameof(jwtOptions.Issuer)}:{jwtOptions.Issuer}",
+                    $"{nameof(jwtOptions.Audience)}:{jwtOptions.Audience}"
+                });
         }
 
         return healthChecksBuilder;
