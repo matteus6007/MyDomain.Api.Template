@@ -30,7 +30,7 @@ public static class HealthChecks
         if (jwtOptions != null)
         {
             healthChecksBuilder.AddIdentityServer(
-                idSvrUri: new Uri(jwtOptions.Issuer), 
+                idSvrUri: new Uri(jwtOptions.Issuer),
                 name: "Identity Server",
                 tags: new string[]
                 {

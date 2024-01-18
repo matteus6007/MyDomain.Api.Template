@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+
 using AutoFixture.Xunit2;
 
 using MyDomain.Api.Authorization;
