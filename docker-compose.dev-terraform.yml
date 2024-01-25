@@ -11,7 +11,7 @@ services:
       - mydomain-api
     volumes:
       - ./terraform/local:/terraform
-      - '~/.ca_certs:/tmp/certs'
+      - ~/.ca_certs:/tmp/certs
     working_dir: /terraform
     environment:
       - REQUESTS_CA_BUNDLE=${REQUESTS_CA_BUNDLE}

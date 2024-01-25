@@ -408,4 +408,4 @@ terraform.tfstate.backup
 
 #Certificates
 firewall-proxy.env
-**/*.crt
+.ca_certs

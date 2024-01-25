@@ -152,6 +152,12 @@ _Note: requires local test environment._
 
 `docker-compose -f docker-compose.test.yml up --build`
 
+You can add custom certificates by setting the `CERT_FILE_PATH` - default is `.ca_certs` - and `CERT_FILE` arguments via environment variables.
+
+_Note: the certificate needs to be available in the docker build context._
+
+`$env:CERT_FILE="my-certificate.crt";docker-compose -f docker-compose.test.yml up --build`
+
 ## Code Coverage
 
 Managed using [Codecov](https://about.codecov.io/).
