@@ -13,7 +13,10 @@ services:
       context: .
       dockerfile: src/tests/MyDomain.Tests/Dockerfile
       target: test
+      args:
+        CERT_FILE_PATH: ${CERT_FILE_PATH:-.ca_certs}
+        CERT_FILE: ${CERT_FILE}
     env_file:
-      - ./docker-compose.env   
+      - ./docker-compose.env
     volumes:
       - ./testresults:/src/tests/MyDomain.Tests/TestResults

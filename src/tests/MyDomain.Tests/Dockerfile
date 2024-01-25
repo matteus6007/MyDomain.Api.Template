@@ -1,4 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+ARG SSL_CERT_DIR=/etc/ssl/certs/
+ARG CERT_FILE_PATH
+ARG CERT_FILE
+
+#Add the CA Certificate to the container
+ADD "*$CERT_FILE_PATH/$CERT_FILE" /src/tests/**/Dockerfile /tmp/
+RUN if [ -f "/tmp/$CERT_FILE" ] ; then cp /tmp/$CERT_FILE $SSL_CERT_DIR ; fi
+RUN update-ca-certificates
+
 WORKDIR /src
 
 ARG HUSKY=0
