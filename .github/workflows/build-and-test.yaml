@@ -34,7 +34,11 @@ jobs:
         dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
 
   test:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write
+      pull-requests: write   
 
     steps:
     - uses: actions/checkout@v3
@@ -61,7 +65,7 @@ jobs:
       uses: schemathesis/action@v1
       with:
         schema: "http://localhost:1001/swagger/v1/swagger.yaml"
-        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --junit-xml testresults/junit-contracts.yml'
+        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --junit-xml testresults/junit-contracts.xml'
         token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
     # - name: Publish provider contract on passing test run
@@ -69,9 +73,10 @@ jobs:
     #   uses: pactflow/actions/publish-provider-contract@v1.2.0
     #   env:
     #     version: "1.2.3"
-    #     application_name: "my-api-provider"
-    #     oas_file: "https://host.docker.internal:7217/swagger/v1/swagger.yaml"
-    #     results_file: "${{ github.workspace }}/testresults/report.txt"
+    #     application_name: "mydomain-api"
+    #     oas_file: "http://host.docker.internal:1001/swagger/v1/swagger.yaml"
+    #     results_file: "${{ github.workspace }}/testresults/junit-contracts.xml"
+    #     REPORT_FILE_CONTENT_TYPE: "text/xml"
     #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
     #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
