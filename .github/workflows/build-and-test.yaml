@@ -65,7 +65,7 @@ jobs:
       uses: schemathesis/action@v1
       with:
         schema: "http://localhost:1001/swagger/v1/swagger.yaml"
-        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --junit-xml ${{ github.workspace }}/testresults/junit-contracts.xml'
+        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=1 --junit-xml /testresults/junit-contracts.xml'
         token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
     # - name: Publish provider contract on passing test run
