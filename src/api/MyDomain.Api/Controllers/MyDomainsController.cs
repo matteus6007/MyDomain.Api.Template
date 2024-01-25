@@ -46,6 +46,7 @@ public class MyDomainsController : ApiController
     /// <param name="id">MyDomain ID</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="200">MyDomain returned</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="401">Not authorized</response>
     /// <response code="404">MyDomain not found</response>
     [HttpGet]

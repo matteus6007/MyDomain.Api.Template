@@ -38,7 +38,7 @@ jobs:
     
     permissions:
       checks: write
-      pull-requests: write   
+      pull-requests: write
 
     steps:
     - uses: actions/checkout@v3
@@ -61,12 +61,15 @@ jobs:
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
 
+    # - name: Schemathesis contract test
+    #   uses: schemathesis/action@v1
+    #   with:
+    #     schema: "http://localhost:1001/swagger/v1/swagger.yaml"
+    #     args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=1 --junit-xml /testresults/junit-contracts.xml'
+    #     token: ${{ secrets.SCHEMATHESIS_TOKEN }}
+
     - name: Schemathesis contract test
-      uses: schemathesis/action@v1
-      with:
-        schema: "http://localhost:1001/swagger/v1/swagger.yaml"
-        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=1 > testresults/report.txt'
-        token: ${{ secrets.SCHEMATHESIS_TOKEN }}
+      run: docker run -it -v $PWD:/api -v $PWD/testresults:/testresults -w /api schemathesis/schemathesis:stable run http://host.docker.internal:1001/swagger/v1/swagger.yaml --request-tls-verify false --checks all --stateful links -H "Authorization: Bearer ${{ secrets.SCHEMATHESIS_TOKEN }}" --hypothesis-max-examples=1 --junit-xml testresults/junit-contracts.xml --schemathesis-io-token ${{ secrets.SCHEMATHESIS_TOKEN }}
 
     # - name: Publish provider contract on passing test run
     #   if: success()
