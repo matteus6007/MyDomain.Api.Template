@@ -73,7 +73,6 @@ jobs:
       env:
         AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
         SCHEMATHESIS_TOKEN: ${{ secrets.SCHEMATHESIS_TOKEN }}
-        SCHEMATHESIS_URL: "https://app.schemathesis.io/"
 
     # - name: Publish provider contract on passing test run
     #   if: success()

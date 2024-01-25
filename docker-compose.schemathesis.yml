@@ -17,10 +17,10 @@ services:
       --stateful links
       -H "Authorization: Bearer ${AUTHORIZATION_TOKEN}"
       --hypothesis-max-examples=2
-      --junit-xml /testresults/junit-contracts.xml
+      --junit-xml junit-contracts.xml
       --schemathesis-io-token ${SCHEMATHESIS_TOKEN}
       --schemathesis-io-url ${SCHEMATHESIS_URL}'
     environment:
       AUTHORIZATION_TOKEN: ${AUTHORIZATION_TOKEN}
       SCHEMATHESIS_TOKEN: ${SCHEMATHESIS_TOKEN}
-      SCHEMATHESIS_URL: ${SCHEMATHESIS_URL}
+      SCHEMATHESIS_URL: ${SCHEMATHESIS_URL:-https://app.schemathesis.io/}
