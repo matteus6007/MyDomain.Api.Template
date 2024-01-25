@@ -397,7 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-#Terraform
+# Terraform
 .output
 .state
 .terraform.lock.hcl
@@ -406,6 +406,9 @@ state.json
 terraform.tfstate
 terraform.tfstate.backup
 
-#Certificates
+# Certificates
 firewall-proxy.env
 .ca_certs
+
+# Contract Testing
+.hypothesis

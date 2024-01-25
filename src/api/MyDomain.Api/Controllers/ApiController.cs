@@ -1,3 +1,5 @@
+using System.Net.Mime;
+
 using ErrorOr;
 
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +12,8 @@ namespace MyDomain.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("v{version:apiVersion}/[controller]")]
-[Produces("application/json")]
+[Produces(MediaTypeNames.Application.Json)]
+[Consumes(MediaTypeNames.Application.Json)]
 public class ApiController : ControllerBase
 {
     protected IActionResult Problem(List<Error> errors)

@@ -42,27 +42,54 @@ jobs:
         fetch-depth: 2
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
+
     - name: Init Terraform (AWS)
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
+
     - name: Apply Terraform (AWS)
       if: success()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve
+
+    - name: Launch Application
+      if: always()
+      run: docker-compose up --build
+
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
+
+    - uses: schemathesis/action@v1
+      with:
+        schema: "https://localhost:7217/swagger/v1/swagger.yaml"
+        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}"'
+
+    # - name: Publish provider contract on passing test run
+    #   if: success()
+    #   uses: pactflow/actions/publish-provider-contract@v1.2.0
+    #   env:
+    #     version: "1.2.3"
+    #     application_name: "my-api-provider"
+    #     oas_file: "https://host.docker.internal:7217/swagger/v1/swagger.yaml"
+    #     results_file: "${{ github.workspace }}/testresults/report.txt"
+    #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+    #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
     - name: Code Coverage
       uses: codecov/codecov-action@v3
       if: always()
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     - name: Upload Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
         path: "${{ github.workspace }}/testresults/*.trx"
+
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
+
     - name: Teardown local test environment
       if: always()
       run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans

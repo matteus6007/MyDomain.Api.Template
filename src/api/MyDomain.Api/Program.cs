@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
     {
         foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
         {
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.yaml",
                 description.GroupName.ToUpperInvariant());
         }
     });

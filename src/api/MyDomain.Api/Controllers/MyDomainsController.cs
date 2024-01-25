@@ -69,7 +69,9 @@ public class MyDomainsController : ApiController
     /// <param name="request">Create new MyDomain request</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="201">MyDomain created</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="401">Not authorized</response>
+    /// <response code="415">Unsupported Media Type</response>
     [HttpPost]
     [Authorize(Policies.Write)]
     [ProducesResponseType(typeof(MyDomainDto), (int)HttpStatusCode.Created)]
@@ -91,8 +93,10 @@ public class MyDomainsController : ApiController
     /// <param name="request">Update MyDomain request</param>
     /// <returns><see cref="MyDomainDto" /></returns>
     /// <response code="200">MyDomain returned</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="401">Not authorized</response>
     /// <response code="404">MyDomain not found</response>
+    /// <response code="415">Unsupported Media Type</response>
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize(Policies.Write)]
