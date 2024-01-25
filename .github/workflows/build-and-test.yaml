@@ -59,7 +59,7 @@ jobs:
 
     - uses: schemathesis/action@v1
       with:
-        schema: "https://localhost:7217/swagger/v1/swagger.yaml"
+        schema: "http://localhost:1001/swagger/v1/swagger.yaml"
         args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}"'
 
     # - name: Publish provider contract on passing test run

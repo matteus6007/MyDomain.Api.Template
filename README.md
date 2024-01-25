@@ -147,6 +147,14 @@ dotnet run --project ./src/api/MyDomain.Api
 docker-compose up --build
 ```
 
+You can add custom certificates by setting the `CERT_FILE_PATH` - default is `.ca_certs` - and `CERT_FILE` arguments via environment variables.
+
+_Note: the certificate needs to be available in the docker build context._
+
+```shell
+$env:CERT_FILE="my-certificate.crt";docker-compose up --build
+```
+
 * Swagger - http://localhost:1001/swagger/index.html
 * Health checks - http://localhost:1001/healthchecks-ui
 

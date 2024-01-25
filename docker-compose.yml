@@ -12,3 +12,6 @@ services:
     build:
       context: .
       dockerfile: src/api/MyDomain.Api/Dockerfile
+      args:
+        CERT_FILE_PATH: ${CERT_FILE_PATH:-.ca_certs}
+        CERT_FILE: ${CERT_FILE}
