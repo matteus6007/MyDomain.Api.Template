@@ -1,0 +1,26 @@
+version: '3.7'
+
+networks:
+  mydomain-api:
+    external: true
+
+services:
+  schemathesis:
+    image: schemathesis/schemathesis:stable
+    networks:
+      - mydomain-api
+    volumes:
+      - ./testresults:/testresults
+    command: 'run http://mydomain.api/swagger/v1/swagger.yaml
+      --request-tls-verify false
+      --checks all
+      --stateful links
+      -H "Authorization: Bearer ${AUTHORIZATION_TOKEN}"
+      --hypothesis-max-examples=2
+      --junit-xml /testresults/junit-contracts.xml
+      --schemathesis-io-token ${SCHEMATHESIS_TOKEN}
+      --schemathesis-io-url ${SCHEMATHESIS_URL}'
+    environment:
+      AUTHORIZATION_TOKEN: ${AUTHORIZATION_TOKEN}
+      SCHEMATHESIS_TOKEN: ${SCHEMATHESIS_TOKEN}
+      SCHEMATHESIS_URL: ${SCHEMATHESIS_URL}

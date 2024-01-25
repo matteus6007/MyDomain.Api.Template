@@ -69,7 +69,11 @@ jobs:
     #     token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
     - name: Schemathesis contract test
-      run: docker run -it -v $PWD:/api -v $PWD/testresults:/testresults -w /api schemathesis/schemathesis:stable run http://host.docker.internal:1001/swagger/v1/swagger.yaml --request-tls-verify false --checks all --stateful links -H "Authorization: Bearer ${{ secrets.SCHEMATHESIS_TOKEN }}" --hypothesis-max-examples=1 --junit-xml testresults/junit-contracts.xml --schemathesis-io-token ${{ secrets.SCHEMATHESIS_TOKEN }}
+      run: docker-compose -f docker-compose.schemathesis.yml up
+      env:
+        AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
+        SCHEMATHESIS_TOKEN: ${{ secrets.SCHEMATHESIS_TOKEN }}
+        SCHEMATHESIS_URL: "https://app.schemathesis.io/"
 
     # - name: Publish provider contract on passing test run
     #   if: success()
