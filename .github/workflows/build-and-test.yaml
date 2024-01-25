@@ -69,7 +69,7 @@ jobs:
     #     token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
     - name: Schemathesis contract test
-      run: docker-compose -f docker-compose.schemathesis.yml up
+      run: docker-compose -f docker-compose.schemathesis.yml up --exit-code-from schemathesis
       env:
         AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
         SCHEMATHESIS_TOKEN: ${{ secrets.SCHEMATHESIS_TOKEN }}
