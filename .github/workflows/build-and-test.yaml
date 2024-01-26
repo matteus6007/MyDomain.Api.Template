@@ -11,7 +11,7 @@ on:
 env:
   SOURCE_DIRECTORY: "./src"
   HUSKY: 0
-  APPLICATION_NAME: "mydomain-api"
+  application_name: "mydomain-api"
 
 jobs:
   build:
@@ -92,7 +92,6 @@ jobs:
       uses: pactflow/actions/publish-provider-contract@v1.2.0
       env:
         version: "1.0.${{github.run_number}}"
-        application_name: $APPLICATION_NAME
         oas_file: "openapi.yaml"
         results_file: "${{ github.workspace }}/junit-contracts.xml"
         REPORT_FILE_CONTENT_TYPE: "text/xml"
@@ -103,7 +102,6 @@ jobs:
       uses: pactflow/actions/can-i-deploy@v1.2.0
       env:
         version: "1.0.${{github.run_number}}"
-        application_name: $APPLICATION_NAME
         to_environment: "test"
         PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
         PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
