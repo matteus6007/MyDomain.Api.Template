@@ -1,7 +1,11 @@
+using System.Net;
+
 using Asp.Versioning;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using MyDomain.Contracts.Models.V1;
 
 namespace MyDomain.Api.Controllers;
 
@@ -14,10 +18,13 @@ public class HealthCheckController : ApiController
     /// <summary>
     /// Get health of MyDomain API
     /// </summary>
+    /// <returns><see cref="HealthCheckDto"/></returns>
+    /// <response code="200">HealthCheck returned</response>
     [AllowAnonymous]
     [HttpGet]
+    [ProducesResponseType(typeof(HealthCheckDto), (int)HttpStatusCode.OK)]
     public IActionResult Get()
     {
-        return Ok(new { status = "Healthy" });
+        return Ok(new HealthCheckDto());
     }
 }

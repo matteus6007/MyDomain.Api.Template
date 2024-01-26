@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 
 using MyDomain.Api.Authorization;
 using MyDomain.Api.Common.Mapping;
+using MyDomain.Api.Filters;
 using MyDomain.Api.Options;
 
 namespace MyDomain.Api;
@@ -41,25 +42,8 @@ public static class DependencyInjection
                 Scheme = "Bearer"
             });
 
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header,
-
-                    },
-                    new List<string>()
-                }
-            });
-
+            options.DocumentFilter<PathLowercaseDocumentFilter>();
+            options.OperationFilter<AuthOperationFilter>();
             options.SwaggerDoc("v1", new() { Title = "MyDomain API", Version = "v1" });
 
             var filePath = Path.Combine(
