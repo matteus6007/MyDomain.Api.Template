@@ -1,0 +1,146 @@
+openapi: 3.0.1
+info:
+  title: MyDomain API
+  version: v1
+paths:
+  /v1/HealthCheck:
+    get:
+      tags:
+        - HealthCheck
+      summary: Get health of MyDomain API
+      responses:
+        '200':
+          description: Success
+  '/v1/MyDomains/{id}':
+    get:
+      tags:
+        - MyDomains
+      summary: Get MyDomain by ID
+      parameters:
+        - name: id
+          in: path
+          description: MyDomain ID
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: MyDomain returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyDomainDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not authorized
+        '404':
+          description: MyDomain not found
+    put:
+      tags:
+        - MyDomains
+      summary: Update existing MyDomain
+      parameters:
+        - name: id
+          in: path
+          description: MyDomain ID
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Update MyDomain request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMyDomainRequest'
+      responses:
+        '200':
+          description: MyDomain returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyDomainDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not authorized
+        '404':
+          description: MyDomain not found
+        '415':
+          description: Unsupported Media Type
+  /v1/MyDomains:
+    post:
+      tags:
+        - MyDomains
+      summary: Create new MyDomain
+      requestBody:
+        description: Create new MyDomain request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMyDomainRequest'
+      responses:
+        '201':
+          description: MyDomain created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyDomainDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Not authorized
+        '415':
+          description: Unsupported Media Type
+components:
+  schemas:
+    CreateMyDomainRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    MyDomainDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+      additionalProperties: false
+    UpdateMyDomainRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+  securitySchemes:
+    Bearer:
+      type: http
+      description: JWT Authorization header using the Bearer scheme
+      scheme: Bearer
+security:
+  - Bearer: [ ]
