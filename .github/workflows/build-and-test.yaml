@@ -45,6 +45,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 2
+
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
 
@@ -62,29 +63,6 @@ jobs:
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
 
-    - name: Schemathesis contract test
-      uses: schemathesis/action@v1
-      with:
-        schema: "http://localhost:1001/swagger/v1/swagger.yaml"
-        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
-        token: ${{ secrets.SCHEMATHESIS_TOKEN }}
-
-    - name: Save OAS
-      run: |
-        curl -X GET "http://localhost:1001/swagger/v1/swagger.yaml" >> docs/openapi.yaml
-
-    - name: Pact - publish successful contract
-      if: success()
-      uses: pactflow/actions/publish-provider-contract@v1.2.0
-      env:
-        version: "1.0.${{github.run_number}}"
-        application_name: $APPLICATION_NAME
-        oas_file: "docs/openapi.yaml"
-        results_file: "${{ github.workspace }}/junit-contracts.xml"
-        REPORT_FILE_CONTENT_TYPE: "text/xml"
-        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-
     - name: Code Coverage
       uses: codecov/codecov-action@v3
       if: always()
@@ -97,6 +75,29 @@ jobs:
       with:
         name: test-results
         path: "${{ github.workspace }}/testresults/*.trx"
+
+    - name: Schemathesis contract test
+      uses: schemathesis/action@v1
+      with:
+        schema: "http://localhost:1001/swagger/v1/swagger.yaml"
+        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
+        token: ${{ secrets.SCHEMATHESIS_TOKEN }}
+
+    - name: Save OAS
+      run: |
+        curl -X GET "http://localhost:1001/swagger/v1/swagger.yaml" >> openapi.yaml
+
+    - name: Pact - publish successful contract
+      if: success()
+      uses: pactflow/actions/publish-provider-contract@v1.2.0
+      env:
+        version: "1.0.${{github.run_number}}"
+        application_name: $APPLICATION_NAME
+        oas_file: "openapi.yaml"
+        results_file: "${{ github.workspace }}/junit-contracts.xml"
+        REPORT_FILE_CONTENT_TYPE: "text/xml"
+        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
     - name: Destroy Terraform (AWS)
       if: always()
