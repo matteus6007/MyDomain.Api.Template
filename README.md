@@ -207,6 +207,7 @@ docker run --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli broker can-i-depl
 Requires the following secrets:
 
 * `AUTHORIZATION_TOKEN` - test authorization token
+* `SCHEMATHESIS_TOKEN` - schemathesis token
 * `PACT_BROKER_BASE_URL` - set the pact broker URL
 * `PACT_BROKER_TOKEN` - set the Pact API Key
 
