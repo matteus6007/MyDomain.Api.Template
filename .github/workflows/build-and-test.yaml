@@ -68,24 +68,17 @@ jobs:
         args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
         token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
-    # - name: Schemathesis contract test
-    #   run: docker-compose -f docker-compose.schemathesis.yml up --exit-code-from schemathesis
-    #   env:
-    #     AUTHORIZATION_TOKEN: ${{ secrets.AUTHORIZATION_TOKEN }}
-    #     SCHEMATHESIS_TOKEN: ${{ secrets.SCHEMATHESIS_TOKEN }}
-    #     SCHEMATHESIS_URL: "https://app.schemathesis.io/"
-
-    # - name: Publish provider contract on passing test run
-    #   if: success()
-    #   uses: pactflow/actions/publish-provider-contract@v1.2.0
-    #   env:
-    #     version: "1.2.3"
-    #     application_name: "mydomain-api"
-    #     oas_file: "http://host.docker.internal:1001/swagger/v1/swagger.yaml"
-    #     results_file: "${{ github.workspace }}/testresults/junit-contracts.xml"
-    #     REPORT_FILE_CONTENT_TYPE: "text/xml"
-    #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-    #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+    - name: Publish successful Pact contract
+      if: success()
+      uses: pactflow/actions/publish-provider-contract@v1.2.0
+      env:
+        version: "1.0.${{github.run_number}}"
+        application_name: "mydomain-api"
+        oas_file: "http://host.docker.internal:1001/swagger/v1/swagger.yaml"
+        results_file: "${{ github.workspace }}/junit-contracts.xml"
+        REPORT_FILE_CONTENT_TYPE: "text/xml"
+        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
     - name: Code Coverage
       uses: codecov/codecov-action@v3
