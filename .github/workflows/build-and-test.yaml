@@ -74,7 +74,7 @@ jobs:
       env:
         version: "1.0.${{github.run_number}}"
         application_name: "mydomain-api"
-        oas_file: "http://host.docker.internal:1001/swagger/v1/swagger.yaml"
+        oas_file: "http://localhost:1001/swagger/v1/swagger.yaml"
         results_file: "${{ github.workspace }}/junit-contracts.xml"
         REPORT_FILE_CONTENT_TYPE: "text/xml"
         PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
