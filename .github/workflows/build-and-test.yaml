@@ -11,6 +11,7 @@ on:
 env:
   SOURCE_DIRECTORY: "./src"
   HUSKY: 0
+  application_name: "mydomain-api"
 
 jobs:
   build:
@@ -34,35 +35,81 @@ jobs:
         dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
 
   test:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 2
+
     - name: Launch local test environment
       run: docker-compose -f docker-compose.dev-env.yml up -d
+
     - name: Init Terraform (AWS)
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
+
     - name: Apply Terraform (AWS)
       if: success()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve
+
+    - name: Launch Application
+      if: always()
+      run: docker-compose up -d --build
+
     - name: Test with docker compose
       run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
+
     - name: Code Coverage
       uses: codecov/codecov-action@v3
       if: always()
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     - name: Upload Test Results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-results
         path: "${{ github.workspace }}/testresults/*.trx"
+
+    - name: Schemathesis contract test
+      uses: schemathesis/action@v1
+      with:
+        schema: "http://localhost:1001/swagger/v1/swagger.yaml"
+        args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
+        token: ${{ secrets.SCHEMATHESIS_TOKEN }}
+
+    - name: Save OAS
+      run: |
+        curl -X GET "http://localhost:1001/swagger/v1/swagger.yaml" >> openapi.yaml
+
+    - name: Pact - publish successful contract
+      if: success()
+      uses: pactflow/actions/publish-provider-contract@v1.2.0
+      env:
+        version: "1.0.${{github.run_number}}"
+        oas_file: "openapi.yaml"
+        results_file: "${{ github.workspace }}/junit-contracts.xml"
+        REPORT_FILE_CONTENT_TYPE: "text/xml"
+        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
+    - name: Pact - can-i-deploy
+      uses: pactflow/actions/can-i-deploy@v1.2.0
+      env:
+        version: "1.0.${{github.run_number}}"
+        to_environment: "test"
+        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
+
     - name: Teardown local test environment
       if: always()
       run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans

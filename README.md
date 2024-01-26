@@ -40,7 +40,7 @@ Example configuration in `appsettings.json`:
 
 Header:
 
-```
+```json
 {
   "alg": "RS256",
   "typ": "JWT",
@@ -50,7 +50,7 @@ Header:
 
 Payload:
 
-```
+```json
 {
     "iss": "http://localhost:8081/identity/",
     "iat": 1621262043,
@@ -68,7 +68,7 @@ Payload:
 
 Signature (header):
 
-```
+```json
 {
   "kty": "RSA",
   "e": "AQAB",
@@ -80,7 +80,7 @@ Signature (header):
 
 Signature (payload):
 
-```
+```json
 {
   "p": "0iwVIDn_VTBbstpJOXUDmK7uIDPQ8V6l-UcadgFp1NxewfG-hLFX0BGAUvTA114vY-6PiepkPEBsetJRG6gj3b7yZj1M-iWaJGccne59sOLScYkeicTn0MhgglM0DHDU0DRR-DRxHA4O2DTFFy-FUHrGJ6xBr9K6RHIYNly_Zjk",
   "kty": "RSA",
@@ -109,11 +109,15 @@ You can verify the JWT here https://jwt.io/#debugger.
 
 Start environment:
 
-`.\environment.ps1 start`
+```shell
+.\environment.ps1 start
+```
 
 Stop environment:
 
-`.\environment.ps1 stop`
+```shell
+.\environment.ps1 stop
+```
 
 Optional parameters:
 
@@ -130,14 +134,26 @@ _Note: requires local test environment._
 
 ### Locally
 
-`dotnet run --project ./src/api/MyDomain.Api`
+```shell
+dotnet run --project ./src/api/MyDomain.Api
+```
 
-* Swagger - http://localhost:5185/swagger/index.html
-* Health checks - http://localhost:5185/healthchecks-ui
+* Swagger - https://localhost:7217/swagger/index.html
+* Health checks - https://localhost:7217/healthchecks-ui
 
 ### Docker
 
-`docker-compose up --build`
+```shell
+docker-compose up --build
+```
+
+You can add custom certificates by setting the `CERT_FILE_PATH` - default is `.ca_certs` - and `CERT_FILE` arguments via environment variables.
+
+_Note: the certificate needs to be available in the docker build context._
+
+```shell
+$env:CERT_FILE="my-certificate.crt";docker-compose up --build
+```
 
 * Swagger - http://localhost:1001/swagger/index.html
 * Health checks - http://localhost:1001/healthchecks-ui
@@ -146,17 +162,54 @@ _Note: requires local test environment._
 
 ### Locally
 
-`dotnet test ./src`
+```shell
+dotnet test ./src
+```
 
 ### Docker
 
-`docker-compose -f docker-compose.test.yml up --build`
+```shell
+docker-compose -f docker-compose.test.yml up --build
+```
 
 You can add custom certificates by setting the `CERT_FILE_PATH` - default is `.ca_certs` - and `CERT_FILE` arguments via environment variables.
 
 _Note: the certificate needs to be available in the docker build context._
 
-`$env:CERT_FILE="my-certificate.crt";docker-compose -f docker-compose.test.yml up --build`
+```shell
+$env:CERT_FILE="my-certificate.crt";docker-compose -f docker-compose.test.yml up --build
+```
+
+## Contract Testing
+
+### Schemathesis
+
+```shell
+docker run -it -v ${pwd}:/api -v ${pwd}/testresults:/testresults -w /api schemathesis/schemathesis:stable run https://host.docker.internal:7217/swagger/v1/swagger.yaml --request-tls-verify false --checks all --stateful links -H "Authorization: Bearer <AUTHORIZATION_TOKEN>" > testresults/report.txt
+```
+
+### Pact
+
+Publish provider contract using the results from `schemathesis`:
+
+```shell
+docker run --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli pactflow publish-provider-contract https://host.docker.internal:7217/swagger/v1/swagger.yaml --broker-base-url <PACT_BROKER_BASE_URL> --broker-token <PACT_BROKER_TOKEN> --provider "my-domain-api" --provider-app-version 1.0.0 --branch <BRANCH> --content-type application/yaml --verification-exit-code=0 --verification-results testresults/report.txt --verification-results-content-type text/plain --verifier schemathesis
+```
+
+Check deployment status using `can-i-deploy`:
+
+```shell
+docker run --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli broker can-i-deploy --pacticipant "my-domain-api" --broker-base-url <PACT_BROKER_BASE_URL> --broker-token <PACT_BROKER_TOKEN> --version 1.0.0 --to-environment test --retry-while-unknown 0 --retry-interval 10
+```
+
+### GitHub Actions
+
+Requires the following secrets:
+
+* `AUTHORIZATION_TOKEN` - test authorization token
+* `SCHEMATHESIS_TOKEN` - schemathesis token
+* `PACT_BROKER_BASE_URL` - set the pact broker URL
+* `PACT_BROKER_TOKEN` - set the Pact API Key
 
 ## Code Coverage
 
