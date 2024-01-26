@@ -193,7 +193,13 @@ docker run -it -v ${pwd}:/api -v ${pwd}/testresults:/testresults -w /api schemat
 Publish provider contract using the results from `schemathesis`:
 
 ```shell
-docker run --network="host" --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli pactflow publish-provider-contract https://host.docker.internal:7217/swagger/v1/swagger.yaml --broker-base-url <PACT_BROKER_BASE_URL> --broker-token <PACT_BROKER_TOKEN> --provider "my-domain-api" --provider-app-version 1.0.0 --branch <BRANCH> --content-type application/yaml --verification-exit-code=0 --verification-results testresults/report.txt --verification-results-content-type text/plain --verifier schemathesis
+docker run --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli pactflow publish-provider-contract https://host.docker.internal:7217/swagger/v1/swagger.yaml --broker-base-url <PACT_BROKER_BASE_URL> --broker-token <PACT_BROKER_TOKEN> --provider "my-domain-api" --provider-app-version 1.0.0 --branch <BRANCH> --content-type application/yaml --verification-exit-code=0 --verification-results testresults/report.txt --verification-results-content-type text/plain --verifier schemathesis
+```
+
+Check deployment status using `can-i-deploy`:
+
+```shell
+docker run --rm -v ${pwd}:/api -w /api pactfoundation/pact-cli broker can-i-deploy --pacticipant "my-domain-api" --broker-base-url <PACT_BROKER_BASE_URL> --broker-token <PACT_BROKER_TOKEN> --version 1.0.0 --to-environment test --retry-while-unknown 0 --retry-interval 10
 ```
 
 ### GitHub Actions

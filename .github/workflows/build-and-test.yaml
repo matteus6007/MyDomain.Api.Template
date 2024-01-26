@@ -99,6 +99,15 @@ jobs:
         PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
         PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
+    - name: Pact - can-i-deploy
+      uses: pactflow/actions/can-i-deploy@v1.2.0
+      env:
+        version: "1.0.${{github.run_number}}"
+        application_name: $APPLICATION_NAME
+        to_environment: "test"
+        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
     - name: Destroy Terraform (AWS)
       if: always()
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
