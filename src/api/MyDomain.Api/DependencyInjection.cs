@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 
 using MyDomain.Api.Authorization;
 using MyDomain.Api.Common.Mapping;
+using MyDomain.Api.Filters;
 using MyDomain.Api.Options;
 
 namespace MyDomain.Api;
@@ -60,6 +61,7 @@ public static class DependencyInjection
                 }
             });
 
+            options.DocumentFilter<PathLowercaseDocumentFilter>();
             options.SwaggerDoc("v1", new() { Title = "MyDomain API", Version = "v1" });
 
             var filePath = Path.Combine(
