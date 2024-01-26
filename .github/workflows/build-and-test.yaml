@@ -11,6 +11,7 @@ on:
 env:
   SOURCE_DIRECTORY: "./src"
   HUSKY: 0
+  APPLICATION_NAME: "mydomain-api"
 
 jobs:
   build:
@@ -68,12 +69,16 @@ jobs:
         args: '-H "Authorization: Bearer ${{ secrets.AUTHORIZATION_TOKEN }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
         token: ${{ secrets.SCHEMATHESIS_TOKEN }}
 
-    - name: Publish successful Pact contract
+    - name: Save OAS
+      run: |
+        curl -X GET "http://localhost:1001/swagger/v1/swagger.yaml" >> docs/openapi.yaml
+
+    - name: Pact - publish successful contract
       if: success()
       uses: pactflow/actions/publish-provider-contract@v1.2.0
       env:
         version: "1.0.${{github.run_number}}"
-        application_name: "mydomain-api"
+        application_name: $APPLICATION_NAME
         oas_file: "docs/openapi.yaml"
         results_file: "${{ github.workspace }}/junit-contracts.xml"
         REPORT_FILE_CONTENT_TYPE: "text/xml"
