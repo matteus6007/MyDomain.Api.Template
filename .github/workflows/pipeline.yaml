@@ -73,7 +73,7 @@ jobs:
 
   deploy_to_test:
     name: Deploy to test
-    needs: test
+    needs: [ build, test ]
     uses: ./.github/workflows/deploy.yaml
     with:
       application_name: ${{ needs.test.outputs.application_name }}
