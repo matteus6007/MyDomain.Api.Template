@@ -4,11 +4,14 @@ runs:
   using: "composite"
   steps:
     - name: Launch local test environment
+      shell: bash
       run: docker-compose -f docker-compose.dev-env.yml up -d
   
     - name: Init Terraform (AWS)
+      shell: bash
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
 
     - name: Apply Terraform (AWS)
       if: success()
+      shell: bash
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve

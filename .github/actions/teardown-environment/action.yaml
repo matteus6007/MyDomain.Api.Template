@@ -5,9 +5,11 @@ runs:
   steps:
     - name: Destroy Terraform (AWS)
       if: always()
+      shell: bash
       run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
 
     - name: Teardown local test environment
       if: always()
+      shell: bash
       run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans
   
