@@ -9,31 +9,16 @@ on:
       - main
 
 env:
-  SOURCE_DIRECTORY: "./src"
   HUSKY: 0
   application_name: "mydomain-api"
   application_version: "1.0.${{github.run_number}}"
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
-    - name: Install dependencies
-      run: dotnet restore $SOURCE_DIRECTORY
-    - name: Build
-      run: dotnet build $SOURCE_DIRECTORY
-    - name: Linting
-      run: |
-        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
-        dotnet format $SOURCE_DIRECTORY --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic --report ./testresults/
+    name: Build
+    uses: ./.github/workflows/build.yaml
+    with:
+      source_directory: "./src"
 
   test:
     runs-on: ubuntu-latest
