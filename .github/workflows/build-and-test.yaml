@@ -72,15 +72,6 @@ jobs:
         pact_broker_base_url: ${{ secrets.PACT_BROKER_BASE_URL }}
         pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
 
-    - name: Pact - can-i-deploy
-      uses: pactflow/actions/can-i-deploy@v1.2.0
-      env:
-        application_name: ${{ env.application_name }}
-        version: ${{ env.application_version }}
-        to_environment: "test"
-        PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-
     - name: Teardown local test environment
       uses: ./.github/actions/teardown-environment
 
@@ -136,3 +127,14 @@ jobs:
         token: ${{ secrets.GIST_TOKEN }}
         gistURL: https://gist.github.com/matteus6007/bcdf0ee6170070c0fcc68059569e76a7
         file: tests.svg
+
+  deploy_to_test:
+    name: Deploy to test
+    needs: test
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      application_name: $application_name
+      application_version: $application_version
+      environment: "test"
+    secrets:
+      inherit
