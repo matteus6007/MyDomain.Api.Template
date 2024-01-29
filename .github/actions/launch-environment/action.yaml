@@ -1,0 +1,14 @@
+name: Launch Environment
+
+runs:
+  using: "composite"
+  steps:
+    - name: Launch local test environment
+      run: docker-compose -f docker-compose.dev-env.yml up -d
+  
+    - name: Init Terraform (AWS)
+      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
+
+    - name: Apply Terraform (AWS)
+      if: success()
+      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve

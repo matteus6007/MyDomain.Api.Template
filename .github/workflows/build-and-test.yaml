@@ -47,14 +47,7 @@ jobs:
         fetch-depth: 2
 
     - name: Launch local test environment
-      run: docker-compose -f docker-compose.dev-env.yml up -d
-
-    - name: Init Terraform (AWS)
-      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform init
-
-    - name: Apply Terraform (AWS)
-      if: success()
-      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform apply -input=false -auto-approve
+      uses: ./.gitub/actions/launch-environment
 
     - name: Launch Application
       if: always()
@@ -106,13 +99,8 @@ jobs:
         PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
         PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
-    - name: Destroy Terraform (AWS)
-      if: always()
-      run: docker-compose -f docker-compose.dev-terraform.yml run --rm terraform destroy -input=false -auto-approve
-
     - name: Teardown local test environment
-      if: always()
-      run: docker-compose -f docker-compose.dev-env.yml down -v --rmi local --remove-orphans
+      uses: ./.gitub/actions/teardown-environment
 
   test_report:
     needs: test
