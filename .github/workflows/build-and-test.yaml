@@ -50,7 +50,7 @@ jobs:
       uses: ./.github/actions/launch-environment
 
     - name: Unit and integration tests
-      uses: ./github/actions/unit_integration_test
+      uses: ./.github/actions/unit-integration-test
       with:
         test_results_path: "${{ github.workspace }}/testresults"
         codecov_token: ${{ secrets.CODECOV_TOKEN }}
