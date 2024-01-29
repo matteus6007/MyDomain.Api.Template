@@ -47,7 +47,7 @@ jobs:
         fetch-depth: 2
 
     - name: Launch local test environment
-      uses: ./.gitub/actions/launch-environment
+      uses: ./.github/actions/launch-environment
 
     - name: Launch Application
       if: always()
@@ -100,7 +100,7 @@ jobs:
         PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
     - name: Teardown local test environment
-      uses: ./.gitub/actions/teardown-environment
+      uses: ./.github/actions/teardown-environment
 
   test_report:
     needs: test
