@@ -44,7 +44,7 @@ jobs:
 
     outputs:
       application_name: ${{ env.application_name }}
-      application_version: ${{ env.application_name }}
+      application_version: ${{ env.application_version }}
 
     steps:
     - uses: actions/checkout@v3
