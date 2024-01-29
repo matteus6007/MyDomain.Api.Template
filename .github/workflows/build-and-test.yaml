@@ -42,6 +42,10 @@ jobs:
       checks: write
       pull-requests: write
 
+    outputs:
+      application_name: ${{ env.application_name }}
+      application_version: ${{ env.application_name }}
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -133,8 +137,8 @@ jobs:
     needs: test
     uses: ./.github/workflows/deploy.yaml
     with:
-      application_name: $application_name
-      application_version: $application_version
+      application_name: ${{ needs.test.outputs.application_name }}
+      application_version: ${{ needs.test.outputs.application_version }}
       environment: "test"
     secrets:
       inherit
