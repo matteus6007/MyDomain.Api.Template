@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      source_directory:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore ${{ inputs.source_directory }}
+
+    - name: Build
+      run: dotnet build ${{ inputs.source_directory }}
+
+    - name: Linting
+      run: |
+        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
+        dotnet format ${{ inputs.source_directory }} --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic

@@ -1,0 +1,83 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  HUSKY: 0
+  application_name: "mydomain-api"
+  application_version: "1.0.${{github.run_number}}"
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yaml
+    with:
+      source_directory: "./src"
+
+  test:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write
+      pull-requests: write
+
+    outputs:
+      application_name: ${{ env.application_name }}
+      application_version: ${{ env.application_version }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Launch local test environment
+      uses: ./.github/actions/launch-environment
+
+    - name: Unit and integration tests
+      uses: ./.github/actions/unit-integration-test
+      with:
+        test_results_path: "${{ github.workspace }}/testresults"
+        codecov_token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Launch Application
+      if: always()
+      run: docker-compose up -d --build
+    
+    - name: Contract tests
+      uses: ./.github/actions/contract-test
+      with:
+        schema_url: "http://localhost:1001/swagger/v1/swagger.yaml"
+        application_name: ${{ env.application_name }}
+        version: ${{ env.application_version }}
+        report_path: ${{ github.workspace }}
+        authorization_token: ${{ secrets.AUTHORIZATION_TOKEN }}
+        schemathesis_token: ${{ secrets.SCHEMATHESIS_TOKEN }}
+        pact_broker_base_url: ${{ secrets.PACT_BROKER_BASE_URL }}
+        pact_broker_token: ${{ secrets.PACT_BROKER_TOKEN }}
+
+    - name: Teardown local test environment
+      uses: ./.github/actions/teardown-environment
+
+  test_report:
+    name: Test Report
+    needs: test
+    uses: ./.github/workflows/test-report.yaml
+    secrets:
+      inherit
+
+  deploy_to_test:
+    name: Deploy to test
+    needs: test
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      application_name: ${{ needs.test.outputs.application_name }}
+      application_version: ${{ needs.test.outputs.application_version }}
+      environment: "test"
+    secrets:
+      inherit

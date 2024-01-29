@@ -1,0 +1,27 @@
+name: Unit and Integration Tests
+
+inputs:
+  test_results_path:
+    required: true
+  codecov_token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Test with docker compose
+      shell: bash
+      run: docker-compose -f docker-compose.test.yml up --build --exit-code-from test
+
+    - name: Code Coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      env:
+        CODECOV_TOKEN: ${{ inputs.codecov_token }}
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: "${{ inputs.test_results_path }}/*.trx"

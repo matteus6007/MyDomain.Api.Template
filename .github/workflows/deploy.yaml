@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      application_name:
+        required: true
+        type: string
+      application_version:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+        default: "test"
+    secrets:
+      PACT_BROKER_BASE_URL:
+        required: true
+      PACT_BROKER_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+     
+      - name: Pact - can-i-deploy
+        uses: pactflow/actions/can-i-deploy@v1.2.0
+        env:
+            application_name: ${{ inputs.application_name }}
+            version: ${{ inputs.application_version }}
+            to_environment: ${{ inputs.environment }}
+            PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+            PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}        
+  
