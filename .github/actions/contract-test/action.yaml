@@ -1,0 +1,47 @@
+name: Contract Tests
+
+inputs:
+  schema_url:
+    required: true
+  application_name:
+    required: true
+  version:
+    required: true
+    default: 1.0.0
+  report_path:
+    required: true
+  authorization_token:
+    required: true
+  schemathesis_token:
+    required: true
+  pact_broker_base_url:
+    required: true
+  pact_broker_token:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Schemathesis contract test
+      uses: schemathesis/action@v1
+      with:
+        schema: ${{ inputs.schema_url }}
+        args: '-H "Authorization: Bearer ${{ inputs.authorization_token }}" --hypothesis-max-examples=2 --junit-xml junit-contracts.xml'
+        token: ${{ inputs.schemathesis_token }}
+
+    - name: Save OAS
+      shell: bash
+      run: |
+        curl -X GET ${{ inputs.schema_url }} >> openapi.yaml
+
+    - name: Pact - publish successful contract
+      if: success()
+      uses: pactflow/actions/publish-provider-contract@v1.2.0
+      env:
+        application_name: ${{ inputs.application_name }}
+        version: ${{ inputs.version }}
+        oas_file: "openapi.yaml"
+        results_file: "${{ inputs.report_path }}/junit-contracts.xml"
+        REPORT_FILE_CONTENT_TYPE: "text/xml"
+        PACT_BROKER_BASE_URL: ${{ inputs.pact_broker_base_url }}
+        PACT_BROKER_TOKEN: ${{ inputs.pact_broker_token }}
