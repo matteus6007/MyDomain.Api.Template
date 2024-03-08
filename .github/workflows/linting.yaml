@@ -1,4 +1,4 @@
-name: Build
+name: Linting
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ on:
         type: string
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -24,8 +24,7 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build
+    - name: Linting
+      run: |
+        FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.base.sha }} HEAD)
+        dotnet format --verify-no-changes --no-restore --include $FILES_CHANGED --severity error -v diagnostic
