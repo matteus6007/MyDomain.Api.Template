@@ -14,7 +14,11 @@ updates:
       - dependency-name: 'Microsoft.Extensions.*'
         update-types: ["version-update:semver-major"]
       - dependency-name: 'Microsoft.AspNetCore.*'
-        update-types: ["version-update:semver-major"]    
+        update-types: ["version-update:semver-major"]
+    groups:
+      nuget-deps:
+        patterns:
+          - "*"   
 
   # Enable version updates for Docker
   - package-ecosystem: "docker"
@@ -23,3 +27,10 @@ updates:
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 10
+
+  - package-ecosystem: "docker"
+    directory: "/src/tests/MyDomain.Tests"
+    # Check for updates once a week
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10    
