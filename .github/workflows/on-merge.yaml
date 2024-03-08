@@ -7,8 +7,6 @@ on:
 
 env:
   HUSKY: 0
-  application_name: "mydomain-api"
-  application_version: "1.0.${{github.run_number}}"
 
 jobs:
   build:
@@ -21,7 +19,7 @@ jobs:
     name: Test
     uses: ./.github/workflows/test.yaml
     with:
-      application_name: "mydomain-api"
+      application_name: ${{ vars.APPLICATION_NAME }}
       application_version: "1.0.${{github.run_number}}"
     secrets:
       inherit
@@ -47,7 +45,7 @@ jobs:
     needs: [ build, test ]
     uses: ./.github/workflows/deploy.yaml
     with:
-      application_name: "mydomain-api"
+      application_name: ${{ vars.APPLICATION_NAME }}
       application_version: "1.0.${{github.run_number}}"
       environment: "test"
     secrets:

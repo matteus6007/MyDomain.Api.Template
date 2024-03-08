@@ -5,6 +5,10 @@ on:
     secrets:
       GIST_TOKEN:
         required: true
+    outputs:
+      test_result_json:
+        description: "Test Result JSON"
+        value: ${{ jobs.test_report.outputs.test_result_json }}
 
 jobs:
   test_report:
