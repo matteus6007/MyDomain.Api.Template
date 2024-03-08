@@ -1,0 +1,54 @@
+name: On Merge
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  HUSKY: 0
+  application_name: "mydomain-api"
+  application_version: "1.0.${{github.run_number}}"
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yaml
+    with:
+      source_directory: "./src"
+
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yaml
+    with:
+      application_name: "mydomain-api"
+      application_version: "1.0.${{github.run_number}}"
+    secrets:
+      inherit
+
+  test_report:
+    name: Test Report
+    needs: test
+    uses: ./.github/workflows/test-report.yaml
+    secrets:
+      inherit
+
+  test_report_badge:
+    name: Test Report Badge
+    needs: test_report
+    uses: ./.github/workflows/test-report-badge.yaml
+    with:
+      test_result_json: ${{ needs.test_report.outputs.test_result_json }}
+    secrets:
+      inherit
+
+  deploy_to_test:
+    name: Deploy to test
+    needs: [ build, test ]
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      application_name: "mydomain-api"
+      application_version: "1.0.${{github.run_number}}"
+      environment: "test"
+    secrets:
+      inherit

@@ -1,35 +1,37 @@
-name: Build and Test
+name: Test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-env:
-  HUSKY: 0
-  application_name: "mydomain-api"
-  application_version: "1.0.${{github.run_number}}"
+  workflow_call:
+    inputs:
+      application_name:
+        required: true
+        type: string
+      application_version:
+        required: true
+        type: string        
+    secrets:
+      CODECOV_TOKEN:
+        required: true
+      AUTHORIZATION_TOKEN:
+        required: true
+      SCHEMATHESIS_TOKEN:
+        required: true
+      PACT_BROKER_BASE_URL:
+        required: true
+      PACT_BROKER_TOKEN:
+        required: true
 
 jobs:
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yaml
-    with:
-      source_directory: "./src"
-
   test:
     runs-on: ubuntu-latest
-    
+      
     permissions:
       checks: write
       pull-requests: write
 
     outputs:
-      application_name: ${{ env.application_name }}
-      application_version: ${{ env.application_version }}
+      application_name: ${{ inputs.application_name }}
+      application_version: ${{ inputs.application_version }}
 
     steps:
     - uses: actions/checkout@v3
@@ -53,8 +55,8 @@ jobs:
       uses: ./.github/actions/contract-test
       with:
         schema_url: "http://localhost:1001/swagger/v1/swagger.yaml"
-        application_name: ${{ env.application_name }}
-        version: ${{ env.application_version }}
+        application_name: ${{ inputs.application_name }}
+        version: ${{ inputs.application_version }}
         report_path: ${{ github.workspace }}
         authorization_token: ${{ secrets.AUTHORIZATION_TOKEN }}
         schemathesis_token: ${{ secrets.SCHEMATHESIS_TOKEN }}
@@ -63,21 +65,3 @@ jobs:
 
     - name: Teardown local test environment
       uses: ./.github/actions/teardown-environment
-
-  test_report:
-    name: Test Report
-    needs: test
-    uses: ./.github/workflows/test-report.yaml
-    secrets:
-      inherit
-
-  deploy_to_test:
-    name: Deploy to test
-    needs: [ build, test ]
-    uses: ./.github/workflows/deploy.yaml
-    with:
-      application_name: ${{ needs.test.outputs.application_name }}
-      application_version: ${{ needs.test.outputs.application_version }}
-      environment: "test"
-    secrets:
-      inherit
