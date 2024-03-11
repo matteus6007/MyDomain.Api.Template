@@ -210,8 +210,6 @@ Requires the following secrets:
 * `SCHEMATHESIS_TOKEN` - schemathesis token
 * `PACT_BROKER_BASE_URL` - set the pact broker URL
 * `PACT_BROKER_TOKEN` - set the Pact API Key
-* `CODECOV_TOKEN` - code coverage integration
-* `GIST_TOKEN` - update test report badge
 
 ## Code Coverage
 
