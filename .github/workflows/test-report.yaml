@@ -2,9 +2,6 @@ name: Test Report
 
 on:
   workflow_call:
-    secrets:
-      GIST_TOKEN:
-        required: true
     outputs:
       test_result_json:
         description: "Test Result JSON"

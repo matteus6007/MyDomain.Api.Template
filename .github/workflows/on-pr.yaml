@@ -35,8 +35,6 @@ jobs:
     name: Test Report
     needs: test
     uses: ./.github/workflows/test-report.yaml
-    secrets:
-      inherit
 
   deploy_to_test:
     name: Deploy to test
