@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: azure/setup-kubectl@3e0aec4d80787158d308d7b364cb1b702e7feb7f
         with:
-          version: '1.30.2'
+          version: 'v1.30.2' # requires the 'v' in version number
 
   build:
     name: Build
