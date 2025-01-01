@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0.303 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0.101 AS build
 
 ARG SSL_CERT_DIR=/etc/ssl/certs/
 ARG CERT_FILE_PATH
